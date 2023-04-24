@@ -18,5 +18,18 @@
         android:id="@+id/homeFragment"
         android:name="com.develop.nowasteinmyfridge.ui.fragment.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_detailFoodItemFragment"
+            app:destination="@id/detailFoodItemFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFoodItemFragment"
+        android:name="com.develop.nowasteinmyfridge.DetailFoodItemFragment"
+        android:label="fragment_detail_food_item"
+        tools:layout="@layout/fragment_detail_food_item" >
+        <argument
+            android:name="meal"
+            app:argType="com.develop.nowasteinmyfridge.model.Meal" />
+    </fragment>
 </navigation>

@@ -1,11 +1,16 @@
 package com.develop.nowasteinmyfridge.adapter
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.develop.nowasteinmyfridge.DetailFoodItemFragment
+import com.develop.nowasteinmyfridge.DetailFoodItemFragmentArgs
+import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.databinding.ListItemBinding
 import com.develop.nowasteinmyfridge.model.Meal
 import javax.inject.Inject
@@ -19,6 +24,12 @@ class NoWasteInMyFrideAdapter @Inject constructor():
             binding.apply {
                 meal = item
                 executePendingBindings()
+            }
+            binding.root.setOnClickListener {
+                val bundle = Bundle().apply {
+                    putSerializable("meal", item)
+                }
+                it.findNavController().navigate(R.id.action_homeFragment_to_detailFoodItemFragment,bundle)
             }
         }
     }

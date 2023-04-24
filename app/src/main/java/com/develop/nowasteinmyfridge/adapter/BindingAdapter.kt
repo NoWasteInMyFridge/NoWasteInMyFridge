@@ -16,7 +16,6 @@ fun ImageView.loadIconUrl(url: String) {
 
     val request = ImageRequest.Builder(this.context)
         .crossfade(true)
-        .crossfade(500)
         .placeholder(R.drawable.loading_placeholder)
         .error(R.drawable.ic_broken_image)
         .data(url)
