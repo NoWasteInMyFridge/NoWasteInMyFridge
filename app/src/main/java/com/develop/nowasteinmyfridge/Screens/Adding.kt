@@ -14,10 +14,10 @@ fun Adding(){
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.Black) // Set the background color to pink
+            .background(color = Color(0xFFF4F5FB))// Set the background color to pink
     ) {
         Text(
-            text = "Adding",
+            text = "",
             style = MaterialTheme.typography.bodyLarge,
             color = Color.White // Set the text color to white for better visibility
         )

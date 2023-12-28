@@ -14,12 +14,12 @@ fun HomeScreen(){
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.Green) // Set the background color to pink
+            .background(color = Color(0xFFF4F5FB))
     ) {
         Text(
-            text = "Adding",
+            text = "Hi Ampere",
             style = MaterialTheme.typography.bodyLarge,
-            color = Color.White // Set the text color to white for better visibility
+            color = Color.White
         )
     }
 }
