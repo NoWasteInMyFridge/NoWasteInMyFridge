@@ -1,12 +1,11 @@
 package com.develop.nowasteinmyfridge
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.develop.nowasteinmyfridge.Page.LoginScreen
+import com.develop.nowasteinmyfridge.Screens.Login.LoginScreen
+import com.develop.nowasteinmyfridge.Screens.MainScreen
 
 
 @Composable
@@ -23,7 +22,4 @@ fun Navigation() {
 }
 
 
-@Composable
-fun MainScreen(navController: NavController){
-    Text("hello")
-}
+
