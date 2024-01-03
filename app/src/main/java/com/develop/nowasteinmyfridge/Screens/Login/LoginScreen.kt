@@ -32,6 +32,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -76,7 +77,7 @@ fun LoginScreen(navController: NavController) {
             }
 
             Text(
-                text = "Welcome",
+                text = stringResource(id = R.string.welcome_message),
                 fontSize = 36.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
@@ -99,7 +100,7 @@ fun LoginScreen(navController: NavController) {
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onNext = { focusPassword.requestFocus() }),
                     singleLine = true,
-                    label = { Text(text = "Username") }
+                    label = { Text(text = stringResource(id = R.string.username)) }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
@@ -108,24 +109,15 @@ fun LoginScreen(navController: NavController) {
                         .focusRequester(focusPassword),
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text(text = "Password") },
+                    label = { Text(text = stringResource(id = R.string.password)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
                     visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
                 )
             }
-            Text(text = "forget your password?")
+            Text(text = stringResource(id = R.string.forget_password))
             Spacer(modifier = Modifier.height(16.dp))
-//            Button(onClick = { /*
-//                Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 40.dp, vertical = 8.dp),
-//                shape = RoundedCornerShape(16.dp)
-//
-//            ) {
-//                Text(text = "LOGIN")
-//            }
             Button(
                 onClick = {
                     navController.navigate(Screen.MainScreen.route)
@@ -135,10 +127,9 @@ fun LoginScreen(navController: NavController) {
                     .padding(horizontal = 40.dp, vertical = 8.dp),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text(text = "LOGIN")
+                Text(text = stringResource(id = R.string.login))
             }
-
-            Text(text = "Don’t have account, sign-in")
+            Text(text = stringResource(id = R.string.need_sign_in))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

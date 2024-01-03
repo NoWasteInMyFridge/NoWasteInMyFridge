@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">NoWasteInMyFridge</string>
+    <string name="welcome_message">welcome</string>
+    <string name="forget_password">forget your password?</string>
+    <string name="login">LOGIN</string>
+    <string name="need_sign_in">Don’t have account, sign-in</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
 </resources>
