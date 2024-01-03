@@ -7,18 +7,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.develop.nowasteinmyfridge.ui.theme.BaseColor
+import com.develop.nowasteinmyfridge.ui.theme.White
 
 @Composable
 fun Setting() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFFF4F5FB))
+            .background(color = BaseColor)
     ) {
         Text(
             text = "Setting",
             style = MaterialTheme.typography.bodyLarge,
-            color = Color.White
+            color = White
         )
     }
 }

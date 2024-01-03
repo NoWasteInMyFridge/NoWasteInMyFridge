@@ -20,6 +20,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.develop.nowasteinmyfridge.BottomNavGraph
 import com.develop.nowasteinmyfridge.ui.theme.BottomBarScreen
+import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
+import com.develop.nowasteinmyfridge.ui.theme.White
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -42,8 +44,8 @@ fun BottomBar(navController: NavHostController) {
     val currentDestination = navController.currentBackStackEntry?.destination
 
     BottomNavigation(
-        backgroundColor = Color.White,
-        contentColor = Color(0xFF888888),
+        backgroundColor = White,
+        contentColor = GrayPrimary,
         modifier = Modifier.height(64.dp)
     ){
         screens.forEach { screen ->
@@ -63,14 +65,11 @@ fun RowScope.AddItem(
     navController: NavHostController
 ) {
     BottomNavigationItem(
-//        label = {
-//            Text(text = screen.title)
-//        },
         icon = {
             Icon(
                 imageVector = screen.icon,
                 contentDescription = "Navigation Icon",
-                tint = if (currentDestination?.route == screen.route) Color(0xFF888888) else Color.Unspecified,
+                tint = if (currentDestination?.route == screen.route) GrayPrimary else Color.Unspecified,
                 modifier = Modifier.size(36.dp)
             )
         },

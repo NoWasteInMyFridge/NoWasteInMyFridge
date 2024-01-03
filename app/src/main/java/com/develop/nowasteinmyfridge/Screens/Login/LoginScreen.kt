@@ -85,14 +85,11 @@ fun LoginScreen(navController: NavController) {
                     .wrapContentSize(Alignment.Center)
             )
 
-//            Spacer(modifier = Modifier.height(16.dp))
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 40.dp)
             ) {
-//                Text(text = "Log in")
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
@@ -117,11 +114,10 @@ fun LoginScreen(navController: NavController) {
                     keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
                     visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
                 )
-//                Spacer(modifier = Modifier.height(16.dp))
             }
             Text(text = "forget your password?")
             Spacer(modifier = Modifier.height(16.dp))
-//            Button(onClick = { /*TODO*/ },
+//            Button(onClick = { /*
 //                Modifier
 //                    .fillMaxWidth()
 //                    .padding(horizontal = 40.dp, vertical = 8.dp),
@@ -132,9 +128,6 @@ fun LoginScreen(navController: NavController) {
 //            }
             Button(
                 onClick = {
-                    // Perform login logic here
-                    // For simplicity, let's assume login is successful
-                    // and navigate to MainScreen
                     navController.navigate(Screen.MainScreen.route)
                 },
                 Modifier
@@ -144,7 +137,6 @@ fun LoginScreen(navController: NavController) {
             ) {
                 Text(text = "LOGIN")
             }
-
 
             Text(text = "Don’t have account, sign-in")
             Box(

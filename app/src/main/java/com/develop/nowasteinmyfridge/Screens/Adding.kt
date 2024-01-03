@@ -8,18 +8,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.develop.nowasteinmyfridge.ui.theme.BaseColor
+import com.develop.nowasteinmyfridge.ui.theme.White
 
 @Composable
 fun Adding(){
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFFF4F5FB))// Set the background color to pink
+            .background(color = BaseColor)
     ) {
         Text(
             text = "",
             style = MaterialTheme.typography.bodyLarge,
-            color = Color.White // Set the text color to white for better visibility
+            color = White
         )
     }
 }
