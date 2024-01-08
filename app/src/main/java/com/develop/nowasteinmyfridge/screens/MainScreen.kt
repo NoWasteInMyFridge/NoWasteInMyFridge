@@ -1,4 +1,4 @@
-package com.develop.nowasteinmyfridge.Screens
+package com.develop.nowasteinmyfridge.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.RowScope
@@ -8,15 +8,13 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.develop.nowasteinmyfridge.BottomNavGraph
 import com.develop.nowasteinmyfridge.ui.theme.BottomBarScreen
@@ -25,14 +23,15 @@ import com.develop.nowasteinmyfridge.ui.theme.White
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen(navController: NavController){
+fun MainScreen() {
     val navController = rememberNavController()
-    Scaffold (
-        bottomBar = { BottomBar(navController = navController)}
-        ) {
+    Scaffold(
+        bottomBar = { BottomBar(navController = navController) }
+    ) {
         BottomNavGraph(navController = navController)
     }
 }
+
 @Composable
 fun BottomBar(navController: NavHostController) {
     val screens = listOf(
@@ -47,7 +46,7 @@ fun BottomBar(navController: NavHostController) {
         backgroundColor = White,
         contentColor = GrayPrimary,
         modifier = Modifier.height(64.dp)
-    ){
+    ) {
         screens.forEach { screen ->
             AddItem(
                 screen = screen,
@@ -80,4 +79,10 @@ fun RowScope.AddItem(
             }
         }
     )
+}
+
+@Preview
+@Composable
+fun MainScreenPreview() {
+    MainScreen()
 }

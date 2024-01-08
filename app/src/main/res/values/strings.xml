@@ -6,4 +6,5 @@
     <string name="need_sign_in">Don’t have account, sign-in</string>
     <string name="password">Password</string>
     <string name="username">Username</string>
+    <string name="toggle_visibility">toggle visibility</string>
 </resources>
