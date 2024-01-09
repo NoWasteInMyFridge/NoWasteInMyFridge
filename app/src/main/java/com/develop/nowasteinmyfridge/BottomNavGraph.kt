@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.develop.nowasteinmyfridge.screens.Adding
+import com.develop.nowasteinmyfridge.feature.adding.Adding
+import com.develop.nowasteinmyfridge.feature.inventory.Inventory
+import com.develop.nowasteinmyfridge.feature.setting.Setting
 import com.develop.nowasteinmyfridge.screens.HomeScreen
-import com.develop.nowasteinmyfridge.screens.Inventory
-import com.develop.nowasteinmyfridge.screens.Setting
 import com.develop.nowasteinmyfridge.ui.theme.BottomBarScreen
 
 @Composable

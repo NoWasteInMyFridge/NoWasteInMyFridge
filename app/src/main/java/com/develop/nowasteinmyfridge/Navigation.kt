@@ -5,8 +5,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.develop.nowasteinmyfridge.feature.login.LoginScreen
 import com.develop.nowasteinmyfridge.screens.MainScreen
-import com.develop.nowasteinmyfridge.screens.login.LoginScreen
 
 @Preview
 @Composable

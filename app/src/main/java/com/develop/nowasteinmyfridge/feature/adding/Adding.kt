@@ -1,4 +1,4 @@
-package com.develop.nowasteinmyfridge.screens
+package com.develop.nowasteinmyfridge.feature.adding
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
