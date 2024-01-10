@@ -7,4 +7,10 @@
     <string name="password">Password</string>
     <string name="username">Username</string>
     <string name="toggle_visibility">toggle visibility</string>
+    <string name="menu_account">Account</string>
+    <string name="menu_setting">Setting</string>
+    <string name="menu_notification">Notification</string>
+    <string name="menu_password">Password</string>
+    <string name="menu_language">Language</string>
+
 </resources>
