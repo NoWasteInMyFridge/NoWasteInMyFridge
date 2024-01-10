@@ -37,10 +37,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.develop.nowasteinmyfridge.R
+import com.develop.nowasteinmyfridge.data.model.MenuItem
 import com.develop.nowasteinmyfridge.ui.theme.BaseColor
 import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
 
-data class MenuItem(val name: String, val icon: ImageVector)
+//data class MenuItem(val name: String, val icon: ImageVector)
+
 @Composable
 fun BoxNavigation(
     menuItem: MenuItem,
@@ -99,7 +101,7 @@ fun BoxNavigation(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = menuItem.name,
+                        text = stringResource(id = menuItem.nameResId),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
                         color = GrayPrimary,
@@ -142,15 +144,18 @@ fun SliderBoxComponentVertical(menuItems: List<MenuItem>, modifier: Modifier = M
 @Composable
 fun Setting() {
     val menuItems = listOf(
-        MenuItem("Account", Icons.Default.AccountCircle),
-        MenuItem("Setting", Icons.Default.Settings),
+        MenuItem(R.string.menu_account, Icons.Default.AccountCircle),
+        MenuItem(R.string.menu_setting, Icons.Default.Settings),
     )
+
     val menuItems2 = listOf(
-        MenuItem("Notification", Icons.Default.Notifications),
-        MenuItem("Device", Icons.Default.Devices),
-        MenuItem("Password", Icons.Default.Password),
-        MenuItem("Language", Icons.Default.Language),
+        MenuItem(R.string.menu_notification, Icons.Default.Notifications),
+        MenuItem(R.string.menu_device, Icons.Default.Devices),
+        MenuItem(R.string.menu_password, Icons.Default.Password),
+        MenuItem(R.string.menu_language, Icons.Default.Language),
     )
+
+
     Scaffold {
         Column(
             modifier = Modifier
