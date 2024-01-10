@@ -41,8 +41,6 @@ import com.develop.nowasteinmyfridge.data.model.MenuItem
 import com.develop.nowasteinmyfridge.ui.theme.BaseColor
 import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
 
-//data class MenuItem(val name: String, val icon: ImageVector)
-
 @Composable
 fun BoxNavigation(
     menuItem: MenuItem,
