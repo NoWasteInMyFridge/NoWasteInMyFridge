@@ -27,7 +27,6 @@ import com.develop.nowasteinmyfridge.ui.theme.BaseColor
 import com.develop.nowasteinmyfridge.ui.theme.Black
 import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
 import com.develop.nowasteinmyfridge.ui.theme.GreenPrimary
-import com.develop.nowasteinmyfridge.ui.theme.PrimaryColor
 import com.develop.nowasteinmyfridge.ui.theme.White
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -37,7 +36,6 @@ fun Adding() {
     var quantity by remember { mutableStateOf(TextFieldValue()) }
     var mfg by remember { mutableStateOf(TextFieldValue()) }
     var efd by remember { mutableStateOf(TextFieldValue()) }
-
 
     Box(
         modifier = Modifier
@@ -51,26 +49,25 @@ fun Adding() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-
-                    Box(
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(fraction = 0.35f)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.mipmap.add_photo),
+                        contentDescription = "",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.FillBounds
+                    )
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(fraction = 0.35f)
+                            .wrapContentSize()
+                            .align(Alignment.CenterStart)
+                            .padding(start = 20.dp, top = 16.dp)
                     ) {
-                        Image(
-                            painter = painterResource(id = R.mipmap.add_photo),
-                            contentDescription = "",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.FillBounds
-                        )
-                        Column(
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .align(Alignment.CenterStart)
-                                .padding(start = 20.dp, top = 16.dp)
-                        ) {
-                        }
                     }
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -105,22 +102,24 @@ fun Adding() {
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
                             color = Black,
-                            modifier = Modifier.padding(top = 40.dp)
+                            modifier = Modifier.padding(top = 40.dp, bottom = 10.dp)
                         )
                         InputFieldWithPlaceholder(stringResource(id = R.string.name_placeholder), name) {
                             name = it
                         }
-
+                        Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = stringResource(id = R.string.quantity),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
                             color = Black,
-                            modifier = Modifier.padding(top = 4.dp)
+                            modifier = Modifier
+                                .padding(bottom = 10.dp)
                         )
                         InputFieldWithPlaceholderWithBorder(stringResource(id = R.string.quantity_placeholder), quantity) {
                             quantity = it
                         }
+                        Spacer(modifier = Modifier.height(16.dp))
                         Row(
                             modifier = Modifier.fillMaxSize().padding(top = 10.dp),
                         ) {
@@ -133,7 +132,8 @@ fun Adding() {
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Normal,
                                     color = Black,
-//                                    modifier = Modifier.padding(top = 14.dp)
+                                    modifier = Modifier
+                                        .padding(bottom = 10.dp)
                                 )
                                 InputFieldWithPlaceholder(stringResource(id = R.string.mfg_placeholder), mfg) {
                                     mfg = it
@@ -149,6 +149,8 @@ fun Adding() {
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Normal,
                                     color = Black,
+                                    modifier = Modifier
+                                        .padding(bottom = 10.dp)
                                 )
                                 InputFieldWithPlaceholder(stringResource(id = R.string.efd_placeholder), efd) {
                                     efd = it
@@ -184,26 +186,27 @@ fun InputFieldWithPlaceholder(
 ) {
     Box(
         modifier = Modifier
-            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = Color.Black,
+                shape = RoundedCornerShape(10.dp)
+            )
             .height(40.dp)
-            .padding(horizontal = 16.dp)
-            .background(Color.White)
     ) {
-        TextField(
-            value = textValue.text,
-            onValueChange = { onValueChange(TextFieldValue(it)) },
+        BasicTextField(
+            value = textValue,
+            onValueChange = { onValueChange(it) },
             textStyle = TextStyle(
                 color = Color.Black,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
             ),
             modifier = Modifier
-                .fillMaxSize(),
-//            colors = TextFieldDefaults.textFieldColors(
-//                focusedIndicatorColor = Color.Transparent,
-//                unfocusedIndicatorColor = Color.Transparent,
-//                cursorColor = Color.Black
-//            )
+                .fillMaxSize()
+                .background(Color.Transparent)
+                .align(Alignment.Center)
+                .padding(start = 20.dp, end = 20.dp, top = 10.dp),
+            maxLines = 1
         )
 
         if (textValue.text.isEmpty()) {
@@ -211,16 +214,17 @@ fun InputFieldWithPlaceholder(
                 text = placeholder,
                 color = Color.Gray,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 modifier = Modifier
-                    .align(Alignment.CenterStart),
+                    .fillMaxSize()
+                    .padding(start = 20.dp, end = 20.dp, top = 10.dp)
+                    .background(Color.Transparent)
+                    .align(Alignment.Center),
                 textAlign = TextAlign.Start
             )
         }
     }
 }
-
-
 @Composable
 fun InputFieldWithPlaceholderWithBorder(
     placeholder: String,
@@ -229,48 +233,41 @@ fun InputFieldWithPlaceholderWithBorder(
 ) {
     Box(
         modifier = Modifier
-            .padding(top = 10.dp, bottom = 10.dp)
-            .height(36.dp)
-            .background(
-                color = Color.White,
-                shape = RoundedCornerShape(10.dp),
-            )
-            .border(
-                width = 1.dp,
-                color = GrayPrimary,
-                shape = RoundedCornerShape(10.dp)
-            )
+            .height(40.dp)
+            .background(GreenPrimary, RoundedCornerShape(10.dp))
     ) {
         BasicTextField(
             value = textValue,
-            onValueChange = {
-                onValueChange(it)
-            },
+            onValueChange = { onValueChange(it) },
             textStyle = TextStyle(
-                color = PrimaryColor,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp
+                color = Color.Black,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
             ),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
-        ) {
-            if (textValue.text.isEmpty()) {
-                Text(
-                    text = placeholder,
-                    color = GreenPrimary,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.bodyLarge.copy(color = Color.Gray),
-                    modifier = Modifier
-                        .padding(start = 4.dp, top = 8.dp)
-                        .align(Alignment.CenterStart),
-                    textAlign = TextAlign.Start
-                )
-            }
+                .background(Color.Transparent)
+                .align(Alignment.Center)
+                .padding(start = 20.dp, end = 20.dp, top = 10.dp),
+            maxLines = 1
+        )
+
+        if (textValue.text.isEmpty()) {
+            Text(
+                text = placeholder,
+                color = Color.Gray,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 20.dp, end = 20.dp, top = 10.dp)
+                    .background(Color.Transparent)
+                    .align(Alignment.Center),
+                textAlign = TextAlign.Start
+            )
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
@@ -281,5 +278,3 @@ fun AddingScreenPreview() {
         efd = it
     }
 }
-
-
