@@ -33,7 +33,6 @@ import com.develop.nowasteinmyfridge.ui.theme.White
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun Adding() {
-<<<<<<< HEAD
     var name by remember { mutableStateOf(TextFieldValue()) }
     var quantity by remember { mutableStateOf(TextFieldValue()) }
     var mfg by remember { mutableStateOf(TextFieldValue()) }
@@ -282,7 +281,5 @@ fun AddingScreenPreview() {
         efd = it
     }
 }
-=======
 
-}
->>>>>>> ui of setting screen
+
