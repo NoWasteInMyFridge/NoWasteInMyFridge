@@ -272,9 +272,5 @@ fun InputFieldWithPlaceholderWithBorder(
 @Preview(showBackground = true)
 @Composable
 fun AddingScreenPreview() {
-//    Adding()
-    var efd by remember { mutableStateOf(TextFieldValue()) }
-    InputFieldWithPlaceholderWithBorder(stringResource(id = R.string.efd_placeholder), efd) {
-        efd = it
-    }
+    Adding()
 }
