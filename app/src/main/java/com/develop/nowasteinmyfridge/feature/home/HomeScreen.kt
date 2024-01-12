@@ -1,4 +1,4 @@
-package com.develop.nowasteinmyfridge.screens
+package com.develop.nowasteinmyfridge.feature.home
 
 import androidx.compose.runtime.Composable
 

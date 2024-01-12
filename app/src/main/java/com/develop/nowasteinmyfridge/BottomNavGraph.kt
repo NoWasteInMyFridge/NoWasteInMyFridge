@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import com.develop.nowasteinmyfridge.feature.adding.Adding
 import com.develop.nowasteinmyfridge.feature.inventory.Inventory
 import com.develop.nowasteinmyfridge.feature.setting.Setting
-import com.develop.nowasteinmyfridge.screens.HomeScreen
+import com.develop.nowasteinmyfridge.feature.home.HomeScreen
 import com.develop.nowasteinmyfridge.ui.theme.BottomBarScreen
 
 @Composable
