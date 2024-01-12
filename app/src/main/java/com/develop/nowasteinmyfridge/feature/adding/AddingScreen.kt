@@ -1,4 +1,4 @@
-package com.develop.nowasteinmyfridge.screens
+package com.develop.nowasteinmyfridge.feature.adding
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -32,7 +32,7 @@ import com.develop.nowasteinmyfridge.ui.theme.White
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Adding() {
+fun AddingScreen() {
     var name by remember { mutableStateOf(TextFieldValue()) }
     var quantity by remember { mutableStateOf(TextFieldValue()) }
     var mfg by remember { mutableStateOf(TextFieldValue()) }
@@ -316,5 +316,5 @@ fun InputFieldWithPlaceholderWithBorder(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AddingScreenPreview() {
-    Adding()
+    AddingScreen()
 }

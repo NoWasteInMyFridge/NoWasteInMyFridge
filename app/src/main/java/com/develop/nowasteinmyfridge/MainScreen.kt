@@ -1,4 +1,4 @@
-package com.develop.nowasteinmyfridge.screens
+package com.develop.nowasteinmyfridge
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.RowScope
@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.develop.nowasteinmyfridge.BottomNavGraph
 import com.develop.nowasteinmyfridge.ui.theme.BottomBarScreen
 import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
 import com.develop.nowasteinmyfridge.ui.theme.White

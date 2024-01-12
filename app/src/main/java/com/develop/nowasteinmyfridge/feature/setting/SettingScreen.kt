@@ -1,4 +1,4 @@
-package com.develop.nowasteinmyfridge.screens
+package com.develop.nowasteinmyfridge.feature.setting
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -138,7 +138,7 @@ fun SliderBoxComponentVertical(menuItems: List<MenuItem>, modifier: Modifier = M
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Setting() {
+fun SettingScreen() {
     val menuItems = listOf(
         MenuItem(R.string.menu_account, Icons.Default.AccountCircle),
         MenuItem(R.string.menu_setting, Icons.Default.Settings),
@@ -213,5 +213,5 @@ fun Setting() {
 @Preview
 @Composable
 fun SettingScreenPreview() {
-    Setting()
+    SettingScreen()
 }

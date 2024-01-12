@@ -1,6 +1,7 @@
-package com.develop.nowasteinmyfridge.screens.login
+package com.develop.nowasteinmyfridge.feature.login
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,15 +20,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -35,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,16 +52,21 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.Screen
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(
+    navController: NavHostController,
+    viewModel: LoginViewModel = hiltViewModel(),
+) {
     var isPasswordVisible by remember { mutableStateOf(false) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -63,6 +74,10 @@ fun LoginScreen(navController: NavHostController) {
     val focusUsername = remember { FocusRequester() }
     val focusPassword = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val coroutineScope = rememberCoroutineScope()
+    val state = viewModel.signInState.collectAsState(initial = null)
+    val context = LocalContext.current
 
     Scaffold {
         Column(
@@ -98,8 +113,7 @@ fun LoginScreen(navController: NavHostController) {
                     .fillMaxWidth()
                     .padding(horizontal = 40.dp)
             ) {
-                OutlinedTextField(
-                    value = email,
+                OutlinedTextField(value = email,
                     onValueChange = { email = it },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -107,13 +121,11 @@ fun LoginScreen(navController: NavHostController) {
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onNext = { focusPassword.requestFocus() }),
                     singleLine = true,
-                    label = { Text(text = stringResource(id = R.string.username)) }
-                )
+                    label = { Text(text = stringResource(id = R.string.username)) })
                 Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusPassword),
+                OutlinedTextField(modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusPassword),
                     value = password,
                     onValueChange = { password = it },
                     label = { Text(text = stringResource(id = R.string.password)) },
@@ -127,22 +139,22 @@ fun LoginScreen(navController: NavHostController) {
                     trailingIcon = {
                         val icon =
                             if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility
-                        IconButton(
-                            onClick = { isPasswordVisible = !isPasswordVisible }
-                        ) {
+                        IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                             Icon(
                                 icon,
                                 contentDescription = stringResource(R.string.toggle_visibility),
                             )
                         }
-                    }
-                )
+                    })
             }
             Text(text = stringResource(id = R.string.forget_password))
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    navController.navigate(Screen.MainScreen.route)
+                    viewModel.loginUser(
+                        email = email,
+                        password = password,
+                    )
                 },
                 Modifier
                     .fillMaxWidth()
@@ -164,6 +176,27 @@ fun LoginScreen(navController: NavHostController) {
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.FillBounds
                 )
+            }
+
+            if (state.value?.isLoading == true) {
+                CircularProgressIndicator()
+            }
+            LaunchedEffect(key1 = state.value?.isSuccess) {
+                coroutineScope.launch {
+                    if (state.value?.isSuccess?.isNotEmpty() == true) {
+                        val success = state.value?.isSuccess
+                        Toast.makeText(context, "$success", Toast.LENGTH_LONG).show()
+                        navController.navigate(Screen.MainScreen.route)
+                    }
+                }
+            }
+            LaunchedEffect(key1 = state.value?.isError) {
+                coroutineScope.launch {
+                    if (state.value?.isError?.isNotEmpty() == true) {
+                        val error = state.value?.isError
+                        Toast.makeText(context, "$error", Toast.LENGTH_LONG).show()
+                    }
+                }
             }
         }
     }
