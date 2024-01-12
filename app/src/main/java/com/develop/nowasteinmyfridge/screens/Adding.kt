@@ -26,6 +26,7 @@ import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.ui.theme.BaseColor
 import com.develop.nowasteinmyfridge.ui.theme.Black
 import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
+import com.develop.nowasteinmyfridge.ui.theme.GreenButton
 import com.develop.nowasteinmyfridge.ui.theme.GreenPrimary
 import com.develop.nowasteinmyfridge.ui.theme.White
 
@@ -104,7 +105,10 @@ fun Adding() {
                             color = Black,
                             modifier = Modifier.padding(top = 40.dp, bottom = 10.dp)
                         )
-                        InputFieldWithPlaceholder(stringResource(id = R.string.name_placeholder), name) {
+                        InputFieldWithPlaceholder(
+                            placeholder = stringResource(id = R.string.name_placeholder),
+                            textValue = name,
+                        ) {
                             name = it
                         }
                         Spacer(modifier = Modifier.height(16.dp))
@@ -116,16 +120,21 @@ fun Adding() {
                             modifier = Modifier
                                 .padding(bottom = 10.dp)
                         )
-                        InputFieldWithPlaceholderWithBorder(stringResource(id = R.string.quantity_placeholder), quantity) {
+                        InputFieldWithPlaceholderWithBorder(
+                            placeholder = stringResource(id = R.string.quantity_placeholder),
+                            textValue = quantity,
+                        ) {
                             quantity = it
                         }
                         Spacer(modifier = Modifier.height(16.dp))
                         Row(
-                            modifier = Modifier.fillMaxSize().padding(top = 10.dp),
+                            modifier = Modifier
+
+                                .padding(top = 10.dp),
                         ) {
                             Column(
                                 modifier = Modifier.weight(1f),
-                                horizontalAlignment = Alignment.Start
+                                horizontalAlignment = Alignment.Start,
                             ) {
                                 Text(
                                     text = stringResource(id = R.string.manufacturing_date),
@@ -135,11 +144,13 @@ fun Adding() {
                                     modifier = Modifier
                                         .padding(bottom = 10.dp)
                                 )
-                                InputFieldWithPlaceholder(stringResource(id = R.string.mfg_placeholder), mfg) {
+                                InputFieldWithPlaceholder(
+                                    placeholder = stringResource(id = R.string.mfg_placeholder),
+                                    textValue = mfg,
+                                ) {
                                     mfg = it
                                 }
                             }
-                            Spacer(modifier = Modifier.width(16.dp))
                             Column(
                                 modifier = Modifier.weight(1f),
                                 horizontalAlignment = Alignment.Start
@@ -152,19 +163,49 @@ fun Adding() {
                                     modifier = Modifier
                                         .padding(bottom = 10.dp)
                                 )
-                                InputFieldWithPlaceholder(stringResource(id = R.string.efd_placeholder), efd) {
+                                InputFieldWithPlaceholder(
+                                    stringResource(id = R.string.efd_placeholder),
+                                    efd,
+                                ) {
                                     efd = it
                                 }
+                            }
+                        }
+                        Row {
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
                                 Button(
                                     onClick = {
                                     },
+                                    colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 80.dp)
 
-                                ) {
+                                        .padding(top = 80.dp),
+
+                                    ) {
                                     Text(
-                                        text = stringResource(id = R.string.add),
+                                        text = stringResource(id = R.string.import_image_ingredient),
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Button(
+                                    onClick = {
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
+                                    modifier = Modifier
+                                        .padding(top = 80.dp),
+
+                                    ) {
+                                    Text(
+                                        text = stringResource(id = R.string.add_ingredient),
                                         color = Color.White,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -182,7 +223,7 @@ fun Adding() {
 fun InputFieldWithPlaceholder(
     placeholder: String,
     textValue: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit
+    onValueChange: (TextFieldValue) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -225,11 +266,12 @@ fun InputFieldWithPlaceholder(
         }
     }
 }
+
 @Composable
 fun InputFieldWithPlaceholderWithBorder(
     placeholder: String,
     textValue: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit
+    onValueChange: (TextFieldValue) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -269,7 +311,7 @@ fun InputFieldWithPlaceholderWithBorder(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AddingScreenPreview() {
     Adding()
