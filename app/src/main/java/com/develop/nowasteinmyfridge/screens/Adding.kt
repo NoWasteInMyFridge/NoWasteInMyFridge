@@ -129,7 +129,6 @@ fun Adding() {
                         Spacer(modifier = Modifier.height(16.dp))
                         Row(
                             modifier = Modifier
-
                                 .padding(top = 10.dp),
                         ) {
                             Column(
@@ -171,20 +170,23 @@ fun Adding() {
                                 }
                             }
                         }
-                        Row {
+                        Row(
+
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
                             Column(
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Button(
                                     onClick = {
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
-                                    modifier = Modifier
-
-                                        .padding(top = 80.dp),
-
-                                    ) {
+                                ) {
                                     Text(
                                         text = stringResource(id = R.string.import_image_ingredient),
                                         color = Color.White,
@@ -193,17 +195,17 @@ fun Adding() {
                                 }
                             }
                             Column(
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Button(
                                     onClick = {
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
-                                    modifier = Modifier
-                                        .padding(top = 80.dp),
-
-                                    ) {
+                                ) {
                                     Text(
                                         text = stringResource(id = R.string.add_ingredient),
                                         color = Color.White,
