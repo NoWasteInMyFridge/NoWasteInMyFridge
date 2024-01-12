@@ -7,10 +7,23 @@
     <string name="password">Password</string>
     <string name="username">Username</string>
     <string name="toggle_visibility">toggle visibility</string>
+
     <string name="menu_account">Account</string>
     <string name="menu_setting">Setting</string>
     <string name="menu_notification">Notification</string>
     <string name="menu_password">Password</string>
     <string name="menu_language">Language</string>
 
+    <string name="inventory">INVENTORY</string>
+    <string name="inventory_info">Add your ingredient</string>
+    <string name="ingredient_name">Ingredient name</string>
+    <string name="name_placeholder">name</string>
+    <string name="quantity_placeholder">quantity</string>
+    <string name="quantity">Quantity of ingredient</string>
+    <string name="manufacturing_date">Manufacturing date</string>
+    <string name="mfg_placeholder">MFG</string>
+    <string name="efd_placeholder">EFD</string>
+    <string name="expiration_date">Expiration Date</string>
+    <string name="add_ingredient">Add</string>
+    <string name="import_image_ingredient">Import Image</string>
 </resources>
