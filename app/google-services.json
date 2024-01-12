@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "513813475889",
+    "project_id": "nowasteinmyfridge-127c3",
+    "storage_bucket": "nowasteinmyfridge-127c3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:513813475889:android:14a73cd65c2f9acc525b10",
+        "android_client_info": {
+          "package_name": "com.develop.nowasteinmyfridge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdpb4iOLlUNDt5NoGP0b7Rt0hv4wd36Eg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
