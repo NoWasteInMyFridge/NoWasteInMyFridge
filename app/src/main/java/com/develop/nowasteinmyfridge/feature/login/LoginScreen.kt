@@ -103,7 +103,7 @@ fun LoginScreen(
                 fontSize = 36.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
-                    .padding(top = 60.dp)
+//                    .padding(top = 60.dp)
                     .fillMaxWidth()
                     .wrapContentSize(Alignment.Center)
             )

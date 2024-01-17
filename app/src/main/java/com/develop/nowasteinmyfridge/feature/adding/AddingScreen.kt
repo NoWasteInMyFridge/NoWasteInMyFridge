@@ -7,22 +7,29 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.develop.nowasteinmyfridge.R
+import com.develop.nowasteinmyfridge.feature.inventory.DataViewModel
 import com.develop.nowasteinmyfridge.ui.theme.BaseColor
 import com.develop.nowasteinmyfridge.ui.theme.Black
 import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
@@ -30,9 +37,11 @@ import com.develop.nowasteinmyfridge.ui.theme.GreenButton
 import com.develop.nowasteinmyfridge.ui.theme.GreenPrimary
 import com.develop.nowasteinmyfridge.ui.theme.White
 
+
+@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AddingScreen() {
+fun AddingScreen(dataViewModel: DataViewModel) {
     var name by remember { mutableStateOf(TextFieldValue()) }
     var quantity by remember { mutableStateOf(TextFieldValue()) }
     var mfg by remember { mutableStateOf(TextFieldValue()) }
@@ -150,6 +159,7 @@ fun AddingScreen() {
                                     mfg = it
                                 }
                             }
+                            Spacer(modifier = Modifier.width(16.dp))
                             Column(
                                 modifier = Modifier.weight(1f),
                                 horizontalAlignment = Alignment.Start
@@ -171,9 +181,8 @@ fun AddingScreen() {
                             }
                         }
                         Row(
-
-                            modifier = Modifier
-                                .fillMaxSize()
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Column(
                                 modifier = Modifier
@@ -183,8 +192,7 @@ fun AddingScreen() {
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Button(
-                                    onClick = {
-                                    },
+                                    onClick = { /* Handle image import */ },
                                     colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
                                 ) {
                                     Text(
@@ -194,6 +202,7 @@ fun AddingScreen() {
                                     )
                                 }
                             }
+//                            Spacer(modifier = Modifier.height(16.dp))
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
@@ -203,9 +212,25 @@ fun AddingScreen() {
                             ) {
                                 Button(
                                     onClick = {
+                                        // Push data to ViewModel
+                                        dataViewModel.pushDataToFirestore(
+                                            name.text,
+                                            quantity.text.toIntOrNull() ?: 0,
+                                            "", // Provide the image URL if available
+                                            mfg.text,
+                                            efd.text
+                                        )
+
+                                        name = TextFieldValue("")
+                                        quantity = TextFieldValue("")
+                                        mfg = TextFieldValue("")
+                                        efd = TextFieldValue("")
+
+//                                        LocalSoftwareKeyboardController.current?.hide()
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
-                                ) {
+                                )
+                                    {
                                     Text(
                                         text = stringResource(id = R.string.add_ingredient),
                                         color = Color.White,
@@ -221,12 +246,14 @@ fun AddingScreen() {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputFieldWithPlaceholder(
     placeholder: String,
     textValue: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     Box(
         modifier = Modifier
             .border(
@@ -249,7 +276,13 @@ fun InputFieldWithPlaceholder(
                 .background(Color.Transparent)
                 .align(Alignment.Center)
                 .padding(start = 20.dp, end = 20.dp, top = 10.dp),
-            maxLines = 1
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+//                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done,
+            ),
+            keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
+
         )
 
         if (textValue.text.isEmpty()) {
@@ -269,12 +302,14 @@ fun InputFieldWithPlaceholder(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputFieldWithPlaceholderWithBorder(
     placeholder: String,
     textValue: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     Box(
         modifier = Modifier
             .height(40.dp)
@@ -293,7 +328,13 @@ fun InputFieldWithPlaceholderWithBorder(
                 .background(Color.Transparent)
                 .align(Alignment.Center)
                 .padding(start = 20.dp, end = 20.dp, top = 10.dp),
-            maxLines = 1
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+//                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done,
+            ),
+            keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
+
         )
 
         if (textValue.text.isEmpty()) {
@@ -316,5 +357,6 @@ fun InputFieldWithPlaceholderWithBorder(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AddingScreenPreview() {
-    AddingScreen()
+    val dataViewModel: DataViewModel = viewModel()
+    AddingScreen(dataViewModel = dataViewModel)
 }
