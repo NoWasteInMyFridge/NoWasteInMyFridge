@@ -24,7 +24,9 @@ import coil.compose.rememberImagePainter
 import com.develop.nowasteinmyfridge.data.model.Ingredient
 
 @Composable
-fun ShowingBox(ingredient: Ingredient) {
+fun ShowingBox(
+    ingredient: Ingredient,
+) {
     Box(
         modifier = Modifier
             .size(120.dp)

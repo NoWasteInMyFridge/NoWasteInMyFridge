@@ -27,9 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.develop.nowasteinmyfridge.R
-import com.develop.nowasteinmyfridge.feature.inventory.DataViewModel
 import com.develop.nowasteinmyfridge.ui.theme.BaseColor
 import com.develop.nowasteinmyfridge.ui.theme.Black
 import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
@@ -41,7 +40,9 @@ import com.develop.nowasteinmyfridge.ui.theme.White
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AddingScreen(dataViewModel: DataViewModel) {
+fun AddingScreen(
+    addingViewModel: AddingViewModel = hiltViewModel()
+) {
     var name by remember { mutableStateOf(TextFieldValue()) }
     var quantity by remember { mutableStateOf(TextFieldValue()) }
     var mfg by remember { mutableStateOf(TextFieldValue()) }
@@ -202,7 +203,6 @@ fun AddingScreen(dataViewModel: DataViewModel) {
                                     )
                                 }
                             }
-//                            Spacer(modifier = Modifier.height(16.dp))
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
@@ -212,25 +212,22 @@ fun AddingScreen(dataViewModel: DataViewModel) {
                             ) {
                                 Button(
                                     onClick = {
-                                        // Push data to ViewModel
-                                        dataViewModel.pushDataToFirestore(
-                                            name.text,
-                                            quantity.text.toIntOrNull() ?: 0,
-                                            "", // Provide the image URL if available
-                                            mfg.text,
-                                            efd.text
+                                        addingViewModel.addIngredient(
+                                            name = name.text,
+                                            quantity = quantity.text.toIntOrNull() ?: 0,
+                                            image = "",
+                                            mfg = mfg.text,
+                                            efd = efd.text,
                                         )
 
                                         name = TextFieldValue("")
                                         quantity = TextFieldValue("")
                                         mfg = TextFieldValue("")
                                         efd = TextFieldValue("")
-
-//                                        LocalSoftwareKeyboardController.current?.hide()
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
                                 )
-                                    {
+                                {
                                     Text(
                                         text = stringResource(id = R.string.add_ingredient),
                                         color = Color.White,
@@ -278,11 +275,9 @@ fun InputFieldWithPlaceholder(
                 .padding(start = 20.dp, end = 20.dp, top = 10.dp),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
-//                keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
             ),
             keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
-
         )
 
         if (textValue.text.isEmpty()) {
@@ -330,11 +325,9 @@ fun InputFieldWithPlaceholderWithBorder(
                 .padding(start = 20.dp, end = 20.dp, top = 10.dp),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
-//                keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
             ),
             keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
-
         )
 
         if (textValue.text.isEmpty()) {
@@ -357,6 +350,5 @@ fun InputFieldWithPlaceholderWithBorder(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AddingScreenPreview() {
-    val dataViewModel: DataViewModel = viewModel()
-    AddingScreen(dataViewModel = dataViewModel)
+    AddingScreen()
 }

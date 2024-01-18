@@ -1,8 +1,7 @@
 package com.develop.nowasteinmyfridge.di
 
-import com.develop.nowasteinmyfridge.data.repository.AuthRepository
-import com.develop.nowasteinmyfridge.data.repository.AuthRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +17,5 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesRepositoryImpl(firebaseAuth: FirebaseAuth): AuthRepository {
-        return AuthRepositoryImpl(firebaseAuth)
-    }
+    fun providesFirebaseFirestore() = FirebaseFirestore.getInstance()
 }
