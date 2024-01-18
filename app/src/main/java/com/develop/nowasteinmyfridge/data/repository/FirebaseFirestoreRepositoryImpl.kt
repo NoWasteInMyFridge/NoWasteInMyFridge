@@ -17,7 +17,7 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
     override suspend fun getIngredient(): List<Ingredient> {
         var ingredients = emptyList<Ingredient>()
         try {
-            val querySnapshot = db.collection("user/$userId/ingredients").get().await()
+            val querySnapshot = db.collection("users/$userId/ingredients").get().await()
             ingredients = querySnapshot.toObjects(Ingredient::class.java)
         } catch (e: FirebaseFirestoreException) {
             Log.d("error", "getIngredient: $e")
@@ -27,7 +27,7 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
 
     override suspend fun addIngredient(ingredient: Ingredient) {
         try {
-            db.collection("user/$userId/ingredients")
+            db.collection("users/$userId/ingredients")
                 .add(ingredient)
                 .await()
         } catch (e: FirebaseFirestoreException) {
