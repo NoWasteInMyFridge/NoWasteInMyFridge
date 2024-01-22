@@ -1,6 +1,10 @@
 package com.develop.nowasteinmyfridge.feature.adding
 
 import android.annotation.SuppressLint
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
 import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.ui.theme.BaseColor
 import com.develop.nowasteinmyfridge.ui.theme.Black
@@ -37,7 +42,6 @@ import com.develop.nowasteinmyfridge.ui.theme.GreenPrimary
 import com.develop.nowasteinmyfridge.ui.theme.White
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddingScreen(
@@ -47,6 +51,15 @@ fun AddingScreen(
     var quantity by remember { mutableStateOf(TextFieldValue()) }
     var mfg by remember { mutableStateOf(TextFieldValue()) }
     var efd by remember { mutableStateOf(TextFieldValue()) }
+    var selectImageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = {
+            selectImageUri = it
+        }
+    )
 
     Box(
         modifier = Modifier
@@ -65,12 +78,21 @@ fun AddingScreen(
                         .fillMaxWidth()
                         .fillMaxHeight(fraction = 0.35f)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.mipmap.add_photo),
-                        contentDescription = "",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.FillBounds
-                    )
+                    if (selectImageUri != null) {
+                        Image(
+                            painter = rememberAsyncImagePainter(model = selectImageUri),
+                            contentDescription = "",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.mipmap.add_photo),
+                            contentDescription = "",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.FillBounds
+                        )
+                    }
                     Column(
                         modifier = Modifier
                             .wrapContentSize()
@@ -139,7 +161,6 @@ fun AddingScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         Row(
                             modifier = Modifier
-                                .padding(top = 10.dp),
                         ) {
                             Column(
                                 modifier = Modifier.weight(1f),
@@ -193,7 +214,11 @@ fun AddingScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Button(
-                                    onClick = { /* Handle image import */ },
+                                    onClick = {
+                                              photoPickerLauncher.launch(
+                                                  PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                              )
+                                              },
                                     colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
                                 ) {
                                     Text(
