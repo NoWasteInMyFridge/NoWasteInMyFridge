@@ -6,6 +6,7 @@ import com.develop.nowasteinmyfridge.data.repository.FirebaseFirestoreRepository
 import com.develop.nowasteinmyfridge.data.repository.FirebaseFirestoreRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,10 +27,12 @@ object DataModule {
     fun providesFirestoreRepository(
         firestore: FirebaseFirestore,
         firebaseAuth: FirebaseAuth,
+        firebaseStorage: FirebaseStorage,
     ): FirebaseFirestoreRepository {
         return FirebaseFirestoreRepositoryImpl(
             firestore,
             firebaseAuth,
+            firebaseStorage,
         )
     }
 }

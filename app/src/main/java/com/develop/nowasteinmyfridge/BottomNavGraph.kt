@@ -23,7 +23,7 @@ fun BottomNavGraph(navController: NavHostController) {
             InventoryScreen()
         }
         composable(route = BottomBarScreen.Adding.route) {
-            AddingScreen()
+            AddingScreen(navController)
         }
 
         composable(route = BottomBarScreen.Setting.route) {

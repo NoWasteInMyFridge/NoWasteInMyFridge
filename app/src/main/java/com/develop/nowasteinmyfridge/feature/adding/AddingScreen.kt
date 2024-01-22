@@ -2,6 +2,7 @@ package com.develop.nowasteinmyfridge.feature.adding
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,32 +21,41 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.develop.nowasteinmyfridge.R
+import com.develop.nowasteinmyfridge.data.model.IngredientCreate
 import com.develop.nowasteinmyfridge.ui.theme.BaseColor
 import com.develop.nowasteinmyfridge.ui.theme.Black
+import com.develop.nowasteinmyfridge.ui.theme.BottomBarScreen
 import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
 import com.develop.nowasteinmyfridge.ui.theme.GreenButton
 import com.develop.nowasteinmyfridge.ui.theme.GreenPrimary
 import com.develop.nowasteinmyfridge.ui.theme.White
+import com.develop.nowasteinmyfridge.util.Result
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddingScreen(
-    addingViewModel: AddingViewModel = hiltViewModel()
+    navController: NavController,
+    addingViewModel: AddingViewModel = hiltViewModel(),
 ) {
     var name by remember { mutableStateOf(TextFieldValue()) }
     var quantity by remember { mutableStateOf(TextFieldValue()) }
@@ -60,7 +70,8 @@ fun AddingScreen(
             selectImageUri = it
         }
     )
-
+    val addIngredientResult by addingViewModel.addIngredientResult.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -106,7 +117,7 @@ fun AddingScreen(
                         .fillMaxSize()
                         .offset(y = (-24).dp)
                         .background(
-                            White,
+                            color = White,
                             shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
                         )
                 ) {
@@ -206,59 +217,76 @@ fun AddingScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxSize(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                Button(
-                                    onClick = {
-                                              photoPickerLauncher.launch(
-                                                  PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                              )
-                                              },
-                                    colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
+                            if (addIngredientResult is Result.Loading) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.fillMaxSize()
                                 ) {
-                                    Text(
-                                        text = stringResource(id = R.string.import_image_ingredient),
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Bold
+                                    CircularProgressIndicator()
+                                }
+                            } else {
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    Button(
+                                        onClick = {
+                                            photoPickerLauncher.launch(
+                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                            )
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
+                                    ) {
+                                        Text(
+                                            text = stringResource(id = R.string.import_image_ingredient),
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    Button(
+                                        onClick = {
+                                            addingViewModel.addIngredient(
+                                                IngredientCreate(
+                                                    name = name.text,
+                                                    quantity = quantity.text.toIntOrNull() ?: 0,
+                                                    image = selectImageUri,
+                                                    mfg = mfg.text,
+                                                    efd = efd.text,
+                                                )
+                                            )
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
                                     )
+                                    {
+                                        Text(
+                                            text = stringResource(id = R.string.add_ingredient),
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
                             }
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxSize(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                Button(
-                                    onClick = {
-                                        addingViewModel.addIngredient(
-                                            name = name.text,
-                                            quantity = quantity.text.toIntOrNull() ?: 0,
-                                            image = "",
-                                            mfg = mfg.text,
-                                            efd = efd.text,
-                                        )
-
-                                        name = TextFieldValue("")
-                                        quantity = TextFieldValue("")
-                                        mfg = TextFieldValue("")
-                                        efd = TextFieldValue("")
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
-                                )
-                                {
-                                    Text(
-                                        text = stringResource(id = R.string.add_ingredient),
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
+                            if (addIngredientResult is Result.Success) {
+                                Toast.makeText(context, "Adding Success", Toast.LENGTH_SHORT).show()
+                                navController.navigate(BottomBarScreen.Inventory.route)
+                            } else if (addIngredientResult is Result.Error) {
+                                val error = (addIngredientResult as Result.Error).exception
+                                Toast.makeText(
+                                    context,
+                                    "ERROR: ${error.message.toString()}",
+                                    Toast.LENGTH_SHORT,
+                                ).show()
                             }
                         }
                     }
@@ -267,6 +295,7 @@ fun AddingScreen(
         }
     }
 }
+
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -330,6 +359,7 @@ fun InputFieldWithPlaceholderWithBorder(
     onValueChange: (TextFieldValue) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+
     Box(
         modifier = Modifier
             .height(40.dp)
@@ -337,7 +367,11 @@ fun InputFieldWithPlaceholderWithBorder(
     ) {
         BasicTextField(
             value = textValue,
-            onValueChange = { onValueChange(it) },
+            onValueChange = {
+                if ((it.text.toIntOrNull() ?: 0) > 0) {
+                    onValueChange(it)
+                }
+            },
             textStyle = TextStyle(
                 color = Color.Black,
                 fontWeight = FontWeight.Normal,
@@ -351,6 +385,7 @@ fun InputFieldWithPlaceholderWithBorder(
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Number
             ),
             keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
         )
@@ -375,5 +410,5 @@ fun InputFieldWithPlaceholderWithBorder(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AddingScreenPreview() {
-    AddingScreen()
+    AddingScreen(rememberNavController())
 }

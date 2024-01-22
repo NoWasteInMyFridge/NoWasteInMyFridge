@@ -149,19 +149,28 @@ fun LoginScreen(
             }
             Text(text = stringResource(id = R.string.forget_password))
             Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = {
-                    viewModel.loginUser(
-                        email = email,
-                        password = password,
-                    )
-                },
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 40.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(text = stringResource(id = R.string.login))
+            if (state.value?.isLoading == true) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else  {
+                Button(
+                    onClick = {
+                        viewModel.loginUser(
+                            email = email,
+                            password = password,
+                        )
+                    },
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 40.dp, vertical = 8.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(text = stringResource(id = R.string.login))
+                }
             }
             Text(text = stringResource(id = R.string.need_sign_in))
             Box(
@@ -178,9 +187,6 @@ fun LoginScreen(
                 )
             }
 
-            if (state.value?.isLoading == true) {
-                CircularProgressIndicator()
-            }
             LaunchedEffect(key1 = state.value?.isSuccess) {
                 coroutineScope.launch {
                     if (state.value?.isSuccess?.isNotEmpty() == true) {

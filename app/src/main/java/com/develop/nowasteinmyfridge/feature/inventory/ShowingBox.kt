@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.develop.nowasteinmyfridge.data.model.Ingredient
 
 @Composable
@@ -52,7 +52,7 @@ fun ShowingBox(
         )
 
         Image(
-            painter = rememberImagePainter(data = ingredient.image),
+            painter = rememberAsyncImagePainter(model = ingredient.image),
             contentDescription = "",
             contentScale = ContentScale.Crop,
             modifier = Modifier
