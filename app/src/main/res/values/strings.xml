@@ -27,4 +27,13 @@
     <string name="add_ingredient">Add</string>
     <string name="take_photo">Take Photo</string>
     <string name="import_image_ingredient">Import Image</string>
+
+    <string name="label_name_user_profile">Name</string>
+    <string name="label_first_name_user_profile">First Name</string>
+    <string name="label_last_name_user_profile">Last Name</string>
+    <string name="label_gender_user_profile">Gender</string>
+    <string name="label_email_user_profile">Email</string>
+    <string name="label_password">Password</string>
+    <string name="label_birthday_user_profile">Birthday</string>
+    <string name="btn_signup">Sign up</string>
 </resources>

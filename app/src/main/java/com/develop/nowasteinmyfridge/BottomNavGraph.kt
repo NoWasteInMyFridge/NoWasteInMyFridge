@@ -8,12 +8,14 @@ import com.develop.nowasteinmyfridge.feature.adding.AddingScreen
 import com.develop.nowasteinmyfridge.feature.home.HomeScreen
 import com.develop.nowasteinmyfridge.feature.inventory.InventoryScreen
 import com.develop.nowasteinmyfridge.feature.setting.SettingScreen
-import com.develop.nowasteinmyfridge.ui.theme.BottomBarScreen
+import com.develop.nowasteinmyfridge.feature.setting.navigation.settingNavGraph
 
+const val MAIN_GRAPH_ROUTE = "main"
 @Composable
 fun BottomNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
+        route = MAIN_GRAPH_ROUTE,
         startDestination = BottomBarScreen.Home.route,
     ) {
         composable(route = BottomBarScreen.Home.route) {
@@ -25,9 +27,6 @@ fun BottomNavGraph(navController: NavHostController) {
         composable(route = BottomBarScreen.Adding.route) {
             AddingScreen(navController)
         }
-
-        composable(route = BottomBarScreen.Setting.route) {
-            SettingScreen()
-        }
+        settingNavGraph(navController)
     }
 }
