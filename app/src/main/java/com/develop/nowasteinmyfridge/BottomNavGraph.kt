@@ -5,9 +5,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.develop.nowasteinmyfridge.feature.adding.AddingScreen
+import com.develop.nowasteinmyfridge.feature.home.HomeScreen
 import com.develop.nowasteinmyfridge.feature.inventory.InventoryScreen
 import com.develop.nowasteinmyfridge.feature.setting.SettingScreen
-import com.develop.nowasteinmyfridge.feature.home.HomeScreen
 import com.develop.nowasteinmyfridge.ui.theme.BottomBarScreen
 
 @Composable
@@ -23,8 +23,9 @@ fun BottomNavGraph(navController: NavHostController) {
             InventoryScreen()
         }
         composable(route = BottomBarScreen.Adding.route) {
-            AddingScreen()
+            AddingScreen(navController)
         }
+
         composable(route = BottomBarScreen.Setting.route) {
             SettingScreen()
         }
