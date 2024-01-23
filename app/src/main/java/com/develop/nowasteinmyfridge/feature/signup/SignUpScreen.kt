@@ -1,7 +1,15 @@
 package com.develop.nowasteinmyfridge.feature.signup
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,24 +25,29 @@ import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.Screen
 import com.develop.nowasteinmyfridge.data.model.UserCreate
@@ -46,7 +59,16 @@ fun SignupScreen(
     signUpViewModel: SignUpViewModel = hiltViewModel()
 ) {
     var userCreate by remember { mutableStateOf(UserCreate("", "", "", "", "", "", "")) }
-    val state = signUpViewModel.createUserResult.collectAsState()
+    val state by signUpViewModel.createUserResult.collectAsStateWithLifecycle()
+    var selectImageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = {
+            selectImageUri = it
+        }
+    )
     val context = LocalContext.current
 
     Column(
@@ -54,8 +76,24 @@ fun SignupScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-
+        // profile
+        if (selectImageUri != null) {
+            Image(
+                painter = rememberAsyncImagePainter(model = selectImageUri),
+                contentDescription = "",
+                modifier = Modifier.fillMaxWidth()
+                    .height(10.dp),
+                contentScale = ContentScale.Crop,
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.mipmap.add_photo),
+                contentDescription = "",
+                modifier = Modifier.fillMaxWidth()
+                    .height(10.dp),
+                contentScale = ContentScale.FillBounds
+            )
+        }
         // firstName
         OutlinedTextField(
             value = userCreate.firstName,
@@ -153,24 +191,62 @@ fun SignupScreen(
         )
 
         // Signup Button
-        Button(
-            onClick = { signUpViewModel.createUser(userCreate) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-                .height(48.dp),
-        ) {
-            Icon(imageVector = Icons.Default.Send, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = stringResource(id = R.string.btn_signup))
+        if (state is Result.Loading) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) { CircularProgressIndicator() }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Button(
+                        onClick = {
+                            photoPickerLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        },
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                            .height(48.dp),
+                    ) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = stringResource(id = R.string.import_image_ingredient))
+                    }
+                }
+                Column(
+                    modifier = Modifier
+                        .weight(1f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Button(
+                        onClick = { signUpViewModel.createUser(userCreate) },
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                            .height(48.dp),
+                    ) {
+                        Icon(imageVector = Icons.Default.Send, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = stringResource(id = R.string.btn_signup))
+                    }
+                }
+            }
+
         }
 
-        if (state.value is Result.Success) {
-            val data = (state.value as Result.Success).data
-            Toast.makeText(context, "Success: $data", Toast.LENGTH_SHORT).show()
+
+        if (state is Result.Success) {
+            Toast.makeText(context, "Sign up Success", Toast.LENGTH_SHORT).show()
             navController.navigate(Screen.LoginScreen.route)
-        } else if (state.value is Result.Error) {
-            val errorMessage = (state.value as Result.Error).exception.message
+        } else if (state is Result.Error) {
+            val errorMessage = (state as Result.Error).exception.message
             Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
         }
     }

@@ -3,7 +3,6 @@ package com.develop.nowasteinmyfridge.feature.signup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.develop.nowasteinmyfridge.data.model.UserCreate
-import com.develop.nowasteinmyfridge.data.model.UserProfile
 import com.develop.nowasteinmyfridge.domain.CreateUserUseCase
 import com.develop.nowasteinmyfridge.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,16 +16,20 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val createUserUseCase: CreateUserUseCase,
 ) : ViewModel() {
-    private val _createUserResult = MutableStateFlow<Result<Unit>>(Result.Loading)
-    val createUserResult: StateFlow<Result<Unit>>
+    private val _createUserResult = MutableStateFlow<Result<Unit>?>(null)
+    val createUserResult: StateFlow<Result<Unit>?>
         get() = _createUserResult
 
     fun createUser(userCreate: UserCreate) {
         viewModelScope.launch(Dispatchers.IO) {
-            createUserUseCase.invoke(userCreate)
-                .collect { result ->
-                    _createUserResult.value = result
-                }
+            try {
+                _createUserResult.value = Result.Loading
+                createUserUseCase.invoke(userCreate)
+                _createUserResult.value = Result.Success(Unit)
+
+            } catch (e: Exception) {
+                _createUserResult.value = Result.Error(e)
+            }
         }
     }
 }
