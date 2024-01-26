@@ -3,14 +3,14 @@ package com.develop.nowasteinmyfridge.data.repository
 import android.util.Log
 import com.develop.nowasteinmyfridge.data.model.Ingredient
 import com.develop.nowasteinmyfridge.data.model.IngredientCreate
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.storage.FirebaseStorage
 import com.develop.nowasteinmyfridge.data.model.UserCreate
 import com.develop.nowasteinmyfridge.data.model.UserProfile
 import com.develop.nowasteinmyfridge.util.Result
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.toObject
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -47,7 +47,8 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
                 val uploadTask = ref.putFile(image)
                 try {
                     val taskSnapshot = uploadTask.await()
-                    val imageUrl = taskSnapshot.metadata!!.reference!!.downloadUrl.await().toString()
+                    val imageUrl =
+                        taskSnapshot.metadata!!.reference!!.downloadUrl.await().toString()
                     db.collection("users/$userEmail/ingredients")
                         .add(
                             Ingredient(
@@ -61,7 +62,7 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
                 } catch (uploadException: Exception) {
                     Log.e("ImageUpload", "Error uploading image: $uploadException")
                 }
-            }else{
+            } else {
                 db.collection("users/$userEmail/ingredients")
                     .add(ingredient)
                     .await()
@@ -75,7 +76,7 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
         return flow {
             emit(Result.Loading)
             try {
-                val userDocument = db.collection("users").document(userEmail ?: "")
+                val userDocument = db.collection("users").document(userEmail)
 
                 val documentSnapshot = userDocument.get().await()
 
@@ -111,6 +112,7 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
 
     override suspend fun createUser(userCreate: UserCreate): Flow<Result<Unit>> {
         return flow {
+            emit(Result.Loading)
             try {
                 firebaseAuth.createUserWithEmailAndPassword(userCreate.email, userCreate.password)
                 val usersCollection = db.collection("users")

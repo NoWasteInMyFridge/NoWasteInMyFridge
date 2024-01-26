@@ -39,11 +39,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
+import com.develop.nowasteinmyfridge.BottomBarScreen
 import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.data.model.IngredientCreate
 import com.develop.nowasteinmyfridge.ui.theme.BaseColor
 import com.develop.nowasteinmyfridge.ui.theme.Black
-import com.develop.nowasteinmyfridge.ui.theme.BottomBarScreen
 import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
 import com.develop.nowasteinmyfridge.ui.theme.GreenButton
 import com.develop.nowasteinmyfridge.ui.theme.GreenPrimary
