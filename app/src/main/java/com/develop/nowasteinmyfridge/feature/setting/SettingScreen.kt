@@ -10,17 +10,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Password
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,17 +31,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.develop.nowasteinmyfridge.R
-import com.develop.nowasteinmyfridge.data.model.MenuItem
 import com.develop.nowasteinmyfridge.ui.theme.BaseColor
 import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
+import com.develop.nowasteinmyfridge.util.Result
 
 @Composable
 fun BoxNavigation(
-    menuItem: MenuItem,
+    menuSettingScreen: MenuSettingScreen,
     isFirstItem: Boolean,
     isLastItem: Boolean,
-    content: @Composable (Modifier) -> Unit
+    navController: NavHostController,
+    content: @Composable (Modifier) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -59,6 +61,7 @@ fun BoxNavigation(
             )
             .background(Color.White)
             .clickable {
+                navController.navigate(menuSettingScreen.route)
             }
             .drawBehind {
                 val lineHeight = 2.dp.toPx()
@@ -83,7 +86,7 @@ fun BoxNavigation(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
-                    imageVector = menuItem.icon,
+                    imageVector = menuSettingScreen.icon,
                     contentDescription = null,
                     tint = GrayPrimary,
                     modifier = Modifier
@@ -97,7 +100,7 @@ fun BoxNavigation(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = stringResource(id = menuItem.nameResId),
+                        text = stringResource(id = menuSettingScreen.nameResID),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
                         color = GrayPrimary,
@@ -119,18 +122,24 @@ fun BoxNavigation(
 }
 
 @Composable
-fun SliderBoxComponentVertical(menuItems: List<MenuItem>, modifier: Modifier = Modifier) {
+fun SliderBoxComponentVertical(
+    menuSettingScreens: List<MenuSettingScreen>,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+) {
 
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        itemsIndexed(menuItems) { index, menuItem ->
+        itemsIndexed(menuSettingScreens) { index, menuItem ->
             BoxNavigation(
-                menuItem = menuItem,
+                menuSettingScreen = menuItem,
                 isFirstItem = index == 0,
-                isLastItem = index == menuItems.size - 1
+                isLastItem = index == menuSettingScreens.size - 1,
+                navController = navController,
             ) {
+
             }
         }
     }
@@ -138,18 +147,44 @@ fun SliderBoxComponentVertical(menuItems: List<MenuItem>, modifier: Modifier = M
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SettingScreen() {
-    val menuItems = listOf(
-        MenuItem(R.string.menu_account, Icons.Default.AccountCircle),
-        MenuItem(R.string.menu_setting, Icons.Default.Settings),
+fun SettingScreen(
+    navController: NavHostController,
+    settingViewModel: SettingViewModel = hiltViewModel(),
+) {
+    val menuSettingScreens = listOf(
+        MenuSettingScreen.Account,
+        MenuSettingScreen.Setting,
+        )
+
+    val menuSettingScreens2 = listOf(
+        MenuSettingScreen.Notification,
+        MenuSettingScreen.Password,
+        MenuSettingScreen.Language,
     )
 
-    val menuItems2 = listOf(
-        MenuItem(R.string.menu_notification, Icons.Default.Notifications),
-        MenuItem(R.string.menu_password, Icons.Default.Password),
-        MenuItem(R.string.menu_language, Icons.Default.Language),
-    )
+    val userInfoState by settingViewModel.userProfileInfoState.collectAsState()
+    val painter = when (val result = userInfoState) {
+        is Result.Success -> {
+            val profileImageUrl = result.data.profileImageUrl
+            if (profileImageUrl != "") {
+                rememberAsyncImagePainter(model = profileImageUrl)
+            } else {
+                painterResource(id = R.drawable.ic_launcher_foreground)
+            }
+        }
 
+        else -> painterResource(id = R.drawable.ic_launcher_foreground)
+    }
+    val userName = when (val result = userInfoState) {
+        is Result.Success -> {
+            val user = result.data
+            user.firstName + " " + user.lastName
+        }
+
+        else -> {
+            "Loading"
+        }
+    }
 
     Scaffold {
         Column(
@@ -176,14 +211,14 @@ fun SettingScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_background),
+                        painter = painter,
                         contentDescription = null,
                         modifier = Modifier
                             .size(100.dp)
                             .clip(CircleShape)
                     )
                     Text(
-                        text = stringResource(id = R.string.welcome_message),
+                        text = userName,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Normal,
                         color = Color.White,
@@ -195,16 +230,18 @@ fun SettingScreen() {
                 }
             }
             SliderBoxComponentVertical(
-                menuItems = menuItems,
+                menuSettingScreens = menuSettingScreens,
                 modifier = Modifier
                     .offset(y = (-60).dp)
-                    .padding(20.dp)
+                    .padding(20.dp),
+                navController = navController,
             )
             SliderBoxComponentVertical(
-                menuItems = menuItems2,
+                menuSettingScreens = menuSettingScreens2,
                 modifier = Modifier
                     .offset(y = (-60).dp)
-                    .padding(20.dp)
+                    .padding(20.dp),
+                navController = navController,
             )
         }
     }
@@ -213,5 +250,6 @@ fun SettingScreen() {
 @Preview
 @Composable
 fun SettingScreenPreview() {
-    SettingScreen()
+    val navController = rememberNavController()
+    SettingScreen(navController)
 }

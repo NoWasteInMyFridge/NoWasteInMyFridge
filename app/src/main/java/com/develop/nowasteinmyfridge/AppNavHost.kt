@@ -9,13 +9,11 @@ import com.develop.nowasteinmyfridge.feature.login.LoginScreen
 
 @Preview
 @Composable
-fun Navigation() {
+fun AppNavHost() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.LoginScreen.route) {
-        composable(route = Screen.LoginScreen.route) {
-            LoginScreen(navController = navController)
-        }
-        composable(route = Screen.MainScreen.route) {
+    NavHost(navController = navController, startDestination = AUTH_GRAPH_ROUTE) {
+        authNavGraph(navController)
+        composable(route = MAIN_GRAPH_ROUTE) {
             MainScreen()
         }
     }

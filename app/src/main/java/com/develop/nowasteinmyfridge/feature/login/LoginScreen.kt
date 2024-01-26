@@ -3,6 +3,7 @@ package com.develop.nowasteinmyfridge.feature.login
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.develop.nowasteinmyfridge.MAIN_GRAPH_ROUTE
 import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.Screen
 import kotlinx.coroutines.launch
@@ -172,7 +174,10 @@ fun LoginScreen(
                     Text(text = stringResource(id = R.string.login))
                 }
             }
-            Text(text = stringResource(id = R.string.need_sign_in))
+            Text(text = stringResource(id = R.string.need_sign_in),
+                modifier = Modifier.clickable {
+                    navController.navigate(Screen.SignUpScreen.route)
+                })
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -192,7 +197,7 @@ fun LoginScreen(
                     if (state.value?.isSuccess?.isNotEmpty() == true) {
                         val success = state.value?.isSuccess
                         Toast.makeText(context, "$success", Toast.LENGTH_LONG).show()
-                        navController.navigate(Screen.MainScreen.route)
+                        navController.navigate(MAIN_GRAPH_ROUTE)
                     }
                 }
             }

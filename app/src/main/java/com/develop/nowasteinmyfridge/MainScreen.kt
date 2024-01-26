@@ -16,14 +16,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.develop.nowasteinmyfridge.ui.theme.BottomBarScreen
 import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
 import com.develop.nowasteinmyfridge.ui.theme.White
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
-    val navController = rememberNavController()
+fun MainScreen(
+    navController: NavHostController = rememberNavController(),
+) {
     Scaffold(
         bottomBar = { BottomBar(navController = navController) }
     ) {
