@@ -1,13 +1,12 @@
 package com.develop.nowasteinmyfridge
 
+import HomeScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.develop.nowasteinmyfridge.feature.adding.AddingScreen
-import com.develop.nowasteinmyfridge.feature.home.HomeScreen
 import com.develop.nowasteinmyfridge.feature.inventory.InventoryScreen
-import com.develop.nowasteinmyfridge.feature.setting.SettingScreen
 import com.develop.nowasteinmyfridge.feature.setting.navigation.settingNavGraph
 
 const val MAIN_GRAPH_ROUTE = "main"

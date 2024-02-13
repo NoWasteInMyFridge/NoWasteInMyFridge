@@ -40,7 +40,7 @@ fun ShowingBox(
                 .clip(shape = RoundedCornerShape(10.dp))
                 .drawWithCache {
                     val gradient = Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black),
+                        colors = listOf(Color.Transparent, Color.Gray),
                         startY = size.height / 4,
                         endY = size.height
                     )
@@ -60,7 +60,7 @@ fun ShowingBox(
                 .clip(shape = RoundedCornerShape(10.dp))
                 .drawWithCache {
                     val gradient = Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black),
+                        colors = listOf(Color.Transparent, Color.Gray),
                         startY = size.height / 4,
                         endY = size.height
                     )
