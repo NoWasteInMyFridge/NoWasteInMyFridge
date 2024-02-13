@@ -20,12 +20,6 @@ class HomeViewModel @Inject constructor(
     val recipesState: State<RecipeSearchResponse>
         get() = _recipesState
 
-    // Remove the initialization from the init block
-    // init {
-    //     viewModelScope.launch(Dispatchers.IO) {
-    //         searchRecipes("pork")
-    //     }
-    // }
 
     fun searchRecipes(query: String) {
         viewModelScope.launch(Dispatchers.IO) {

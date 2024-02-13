@@ -1,7 +1,5 @@
 package com.develop.nowasteinmyfridge.di
 
-import RecipeRepositoryImpl
-import com.develop.nowasteinmyfridge.data.repository.RecipeRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -25,14 +23,5 @@ object AppModule {
     @Provides
     @Singleton
     fun providesStorageReference() = FirebaseStorage.getInstance()
-
-    @Module
-    @InstallIn(SingletonComponent::class)
-    object AppModule {
-        @Provides
-        fun provideRecipeRepository(): RecipeRepository {
-            return RecipeRepositoryImpl()
-        }
-    }
 
 }

@@ -3,13 +3,17 @@ package com.develop.nowasteinmyfridge
 import HomeScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.develop.nowasteinmyfridge.feature.adding.AddingScreen
+import com.develop.nowasteinmyfridge.feature.home.MenuScreen
 import com.develop.nowasteinmyfridge.feature.inventory.InventoryScreen
 import com.develop.nowasteinmyfridge.feature.setting.navigation.settingNavGraph
 
 const val MAIN_GRAPH_ROUTE = "main"
+const val MENU_SCREEN_ROUTE = "menu/{name}/{image}"
 @Composable
 fun BottomNavGraph(navController: NavHostController) {
     NavHost(
@@ -18,7 +22,7 @@ fun BottomNavGraph(navController: NavHostController) {
         startDestination = BottomBarScreen.Home.route,
     ) {
         composable(route = BottomBarScreen.Home.route) {
-            HomeScreen()
+            HomeScreen(navController = navController)
         }
         composable(route = BottomBarScreen.Inventory.route) {
             InventoryScreen()
@@ -27,5 +31,18 @@ fun BottomNavGraph(navController: NavHostController) {
             AddingScreen(navController)
         }
         settingNavGraph(navController)
+        composable(
+            route = MENU_SCREEN_ROUTE,
+            arguments = listOf(
+                navArgument("name") { type = NavType.StringType },
+                navArgument("image") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val name = backStackEntry.arguments?.getString("name")
+            val image = backStackEntry.arguments?.getString("image")
+            if (name != null && image != null) {
+                MenuScreen(name = name, image = image)
+            }
+        }
     }
 }
