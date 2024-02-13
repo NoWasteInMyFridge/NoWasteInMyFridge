@@ -1,6 +1,6 @@
 package com.develop.nowasteinmyfridge
 
-import HomeScreen
+
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.develop.nowasteinmyfridge.feature.adding.AddingScreen
+import com.develop.nowasteinmyfridge.feature.home.HomeScreen
 import com.develop.nowasteinmyfridge.feature.home.MenuScreen
 import com.develop.nowasteinmyfridge.feature.inventory.InventoryScreen
 import com.develop.nowasteinmyfridge.feature.setting.navigation.settingNavGraph
