@@ -23,5 +23,4 @@ object AppModule {
     @Provides
     @Singleton
     fun providesStorageReference() = FirebaseStorage.getInstance()
-
 }
