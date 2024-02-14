@@ -252,7 +252,8 @@ fun SliderBoxComponent(
                         contentDescription = "Image for $name",
                         modifier = Modifier
                             .size(30.dp)
-                            .clip(CircleShape)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.FillBounds
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
@@ -323,7 +324,8 @@ fun SliderBoxComponentVertical(
                         AsyncImage(
                             model = images.getOrNull(index),
                             contentDescription = "Image for $name",
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.FillBounds
                         )
                     }
                 }
