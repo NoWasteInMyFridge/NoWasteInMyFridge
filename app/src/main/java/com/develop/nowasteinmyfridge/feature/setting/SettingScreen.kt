@@ -159,7 +159,8 @@ fun SettingScreen(
     val menuSettingScreens2 = listOf(
         MenuSettingScreen.Notification,
         MenuSettingScreen.Password,
-        MenuSettingScreen.Language,
+        MenuSettingScreen.Grocery,
+        MenuSettingScreen.WasteReport
     )
 
     val userInfoState by settingViewModel.userProfileInfoState.collectAsState()

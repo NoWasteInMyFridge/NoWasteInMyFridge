@@ -23,5 +23,6 @@ data class RecipeHit(
 data class Recipe(
     val label: String,
     val url: String,
-    val image: String
+    val image: String,
+    val ingredientLines: List<String>
 )

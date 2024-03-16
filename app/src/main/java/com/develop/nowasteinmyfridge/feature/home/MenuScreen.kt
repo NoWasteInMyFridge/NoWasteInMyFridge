@@ -30,7 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,7 +42,7 @@ import com.develop.nowasteinmyfridge.ui.theme.White
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MenuScreen(name: String, image: String) {
+fun MenuScreen(name: String, image: String, ingredients: List<String>) {
     Scaffold {
         Column(
             modifier = Modifier
@@ -111,6 +114,20 @@ fun MenuScreen(name: String, image: String) {
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold,
                             )
+                            Text(
+                                text = buildAnnotatedString {
+                                    ingredients.forEach { ingredient ->
+                                        withStyle(style = SpanStyle(fontSize = 16.sp)) {
+                                            append("• ")
+                                        }
+                                        append(ingredient)
+                                        append("\n")
+                                    }
+                                },
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.Black
+                            )
                         }
                     }
                 }
@@ -165,5 +182,17 @@ fun OvalIconView(icon: ImageVector, text: String){
 @Preview
 @Composable
 fun MenuScreenPreview() {
-    MenuScreen(name = "Green pepper Salad With Teriyaki chicken", image = "https://simply-delicious-food.com/wp-content/uploads/2019/07/blt-chicken-salad-3-2.jpg")
+    val ingredients = listOf(
+        "1/2 cup olive oil",
+        "5 cloves garlic, peeled",
+        "2 large russet potatoes, peeled and cut into chunks",
+        "1 3-4 pound chicken, cut into 8 pieces (or 3 pound chicken legs)",
+        "3/4 cup white wine",
+        "3/4 cup chicken stock",
+        "3 tablespoons chopped parsley",
+        "1 tablespoon dried oregano",
+        "Salt and pepper",
+        "1 cup frozen peas, thawed"
+    )
+    MenuScreen(name = "Green pepper Salad With Teriyaki chicken", image = "https://simply-delicious-food.com/wp-content/uploads/2019/07/blt-chicken-salad-3-2.jpg", ingredients = ingredients)
 }

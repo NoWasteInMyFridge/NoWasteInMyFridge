@@ -3,7 +3,6 @@ package com.develop.nowasteinmyfridge.feature.setting
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Settings
@@ -40,9 +39,15 @@ sealed class MenuSettingScreen(
         icon = Icons.Default.Password,
     )
 
-    data object Language : MenuSettingScreen(
-        route = "language",
-        nameResID = R.string.menu_language,
-        icon = Icons.Default.Language,
+    data object Grocery : MenuSettingScreen(
+        route = "grocery",
+        nameResID = R.string.menu_grocery,
+        icon = Icons.Default.Notifications,
+    )
+
+    data object WasteReport : MenuSettingScreen(
+        route = "waste_report",
+        nameResID = R.string.menu_waste_report,
+        icon = Icons.Default.Notifications,
     )
 }
