@@ -103,6 +103,7 @@ fun HomeScreen(
     val hits = recipesState?.hits
     val recipeNames = hits?.map { it.recipe.label }
     val recipeImages = hits?.map { it.recipe.image }
+    val ingredientLines = hits?.flatMap { it.recipe.ingredientLines } ?: emptyList()
 
     Column {
         Box(
@@ -192,8 +193,8 @@ fun HomeScreen(
                                         names = recipeNames ?: emptyList(),
                                         images = recipeImages ?: emptyList(),
                                         onItemClick = { name, image ->
-                                            // Navigate to the MenuScreen with the selected name and image
-                                            navController.navigate("menu/${Uri.encode(name)}/${Uri.encode(image)}")
+                                            navController.navigate("menu/${Uri.encode(name)}/${Uri.encode(image)}?ingredients=${Uri.encode(ingredientLines.joinToString(";"))}")
+//                                            navController.navigate("menu/${Uri.encode(name)}/${Uri.encode(image)}")
                                         }
                                     )
 
@@ -333,81 +334,6 @@ fun SliderBoxComponentVertical(
         }
     }
 }
-
-
-//@Composable
-//fun SliderBoxComponentVertical(
-//    names: List<String>,
-//    images: List<String>,
-//    modifier: Modifier = Modifier,
-//    onItemClick: (name: String, image: String) -> Unit
-//) {
-//    var selectedIndex by remember { mutableStateOf(0) }
-//
-//    LazyColumn(
-//        modifier = modifier
-//            .fillMaxWidth()
-//    ) {
-//        itemsIndexed(names) { index, name ->
-//            Box(
-//                modifier = Modifier
-//                    .padding(vertical = 8.dp)
-//                    .clip(MaterialTheme.shapes.medium)
-//                    .background(MaterialTheme.colorScheme.background)
-//                    .clickable {
-//                        selectedIndex = index
-//                    }
-//                    .border(
-//                        width = 2.dp,
-//                        color = GrayPrimary,
-//                        shape = RoundedCornerShape(16.dp)
-//                    )
-//                    .graphicsLayer(
-//                        translationY = if (index == selectedIndex) -4F else 0F,
-//                        shape = RoundedCornerShape(16.dp)
-//                    )
-//                    .height(100.dp)
-//            ) {
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .padding(start = 40.dp),
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Box( modifier = Modifier
-//                        .fillMaxHeight()
-//                        .width(250.dp),
-//                        contentAlignment = Alignment.CenterStart
-//                    ) {
-//                        Text(
-//                            text = name,
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            color = MaterialTheme.colorScheme.onBackground,
-//                            maxLines = 1,
-//                            overflow = TextOverflow.Ellipsis,
-//                        )
-//                    }
-//
-//                    Spacer(modifier = Modifier.weight(1f))
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxHeight()
-//                    ) {
-//                        AsyncImage(
-//                            model = images.getOrNull(index),
-//                            contentDescription = "Image for $name",
-//                            modifier = Modifier
-//                                .fillMaxSize()
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-
-
-
 
 @Preview
 @Composable

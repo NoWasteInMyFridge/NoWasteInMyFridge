@@ -1,5 +1,7 @@
 package com.develop.nowasteinmyfridge.data.repository
 
+import com.develop.nowasteinmyfridge.data.model.GroceryList
+import com.develop.nowasteinmyfridge.data.model.GroceryListCreate
 import com.develop.nowasteinmyfridge.data.model.Ingredient
 import com.develop.nowasteinmyfridge.data.model.IngredientCreate
 import com.develop.nowasteinmyfridge.data.model.UserCreate
@@ -11,4 +13,7 @@ interface FirebaseFirestoreRepository {
     suspend fun addIngredient(ingredient: IngredientCreate)
     suspend fun getUserInfo(): Flow<Result<UserProfile>>
     suspend fun createUser(userCreate: UserCreate): Flow<Result<Unit>>
+
+    suspend fun getGroceryList(): List<GroceryList>
+    suspend fun addGroceryList(groceryList: GroceryListCreate)
 }

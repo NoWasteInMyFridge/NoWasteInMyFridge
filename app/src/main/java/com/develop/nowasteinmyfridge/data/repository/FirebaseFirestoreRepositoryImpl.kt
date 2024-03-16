@@ -2,9 +2,12 @@ package com.develop.nowasteinmyfridge.data.repository
 
 import android.util.Log
 import com.develop.nowasteinmyfridge.data.model.Ingredient
+import com.develop.nowasteinmyfridge.data.model.GroceryList
 import com.develop.nowasteinmyfridge.data.model.IngredientCreate
+import com.develop.nowasteinmyfridge.data.model.GroceryListCreate
 import com.develop.nowasteinmyfridge.data.model.UserCreate
 import com.develop.nowasteinmyfridge.data.model.UserProfile
+import com.develop.nowasteinmyfridge.feature.grocerylist.GroceryList
 import com.develop.nowasteinmyfridge.util.Result
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,6 +31,34 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
     private val db = firebaseFirestore
     private val userEmail = firebaseAuth.currentUser?.email.orEmpty()
     private val storageRef = firebaseStorage.reference
+
+    override suspend fun addGroceryList(groceryList: GroceryListCreate) {
+        try {
+            db.collection("users/$userEmail/groceryList")
+                .add(
+                    com.develop.nowasteinmyfridge.data.model.GroceryList(
+                        name = groceryList.name,
+                        quantity = groceryList.quantity,
+                    )
+                ).await()
+        } catch (e: Exception) {
+            Log.e("FirestoreError", "Error adding grocery list to Firestore: $e")
+            throw e
+        }
+    }
+
+
+    override suspend fun getGroceryList(): List<GroceryList> {
+        var groceryLists = emptyList<GroceryList>()
+        try {
+            val querySnapshot = db.collection("users/$userEmail/groceryList").get().await()
+            groceryLists = querySnapshot.toObjects(GroceryList::class.java)
+        } catch (e: FirebaseFirestoreException) {
+            Log.d("error", "getGrocery: $e")
+        }
+        return groceryLists
+    }
+
     override suspend fun getIngredient(): List<Ingredient> {
         var ingredients = emptyList<Ingredient>()
         try {

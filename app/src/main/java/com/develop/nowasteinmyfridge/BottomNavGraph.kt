@@ -31,17 +31,34 @@ fun BottomNavGraph(navController: NavHostController) {
             AddingScreen(navController)
         }
         settingNavGraph(navController)
+//        composable(
+//            route = MENU_SCREEN_ROUTE,
+//            arguments = listOf(
+//                navArgument("name") { type = NavType.StringType },
+//                navArgument("image") { type = NavType.StringType }
+//            )
+//        ) { backStackEntry ->
+//            val name = backStackEntry.arguments?.getString("name")
+//            val image = backStackEntry.arguments?.getString("image")
+//            if (name != null && image != null) {
+//                MenuScreen(name = name, image = image)
+//            }
+//        }
         composable(
             route = MENU_SCREEN_ROUTE,
             arguments = listOf(
                 navArgument("name") { type = NavType.StringType },
-                navArgument("image") { type = NavType.StringType }
+                navArgument("image") { type = NavType.StringType },
+                navArgument("ingredients") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val name = backStackEntry.arguments?.getString("name")
             val image = backStackEntry.arguments?.getString("image")
+            val ingredientsString = backStackEntry.arguments?.getString("ingredients")
+            val ingredients = ingredientsString?.split(";") ?: emptyList()
+
             if (name != null && image != null) {
-                MenuScreen(name = name, image = image)
+                MenuScreen(name = name, image = image, ingredients = ingredients)
             }
         }
     }
