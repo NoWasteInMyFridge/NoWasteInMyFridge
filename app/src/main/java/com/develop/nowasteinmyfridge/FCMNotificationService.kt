@@ -58,7 +58,7 @@ class FCMNotificationService : FirebaseMessagingService(){
 
         // Build the notification
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(androidx.core.R.drawable.ic_call_answer)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(title)
             .setContentText(body)
             .setAutoCancel(true)
