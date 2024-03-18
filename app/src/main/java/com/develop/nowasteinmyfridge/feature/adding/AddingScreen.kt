@@ -53,7 +53,9 @@ import com.develop.nowasteinmyfridge.ui.theme.GreenPrimary
 import com.develop.nowasteinmyfridge.ui.theme.White
 import com.develop.nowasteinmyfridge.util.Result
 import java.text.SimpleDateFormat
+import androidx.compose.foundation.layout.Row
 import java.util.*
+import androidx.compose.foundation.layout.*
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -129,12 +131,18 @@ fun AddingScreen(
                             .padding(top = 40.dp, start = 20.dp, end = 20.dp),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.inventory),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Black,
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.inventory),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Black,
+                            )
+                            SwitchDemo()
+                        }
                         Text(
                             text = stringResource(id = R.string.inventory_info),
                             fontSize = 12.sp,
@@ -551,6 +559,15 @@ fun ClickableTextWithPlaceholderWithNoValue(
             )
         }
     }
+}
+
+@Composable
+fun SwitchDemo() {
+    val checkedState = remember { mutableStateOf(true) }
+    androidx.compose.material.Switch(
+        checked = checkedState.value,
+        onCheckedChange = { checkedState.value = it }
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
