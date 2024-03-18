@@ -5,10 +5,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.develop.nowasteinmyfridge.data.model.GroceryList
 import com.develop.nowasteinmyfridge.data.model.GroceryListCreate
 import com.develop.nowasteinmyfridge.domain.AddGroceryListUseCase
 import com.develop.nowasteinmyfridge.domain.GetGroceryListUseCase
-import com.develop.nowasteinmyfridge.data.model.GroceryList
 import com.develop.nowasteinmyfridge.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -43,6 +43,7 @@ class GroceryListViewModel @Inject constructor(
                 _addGroceryListResult.value = Result.Loading
                 addGroceryListUseCase.invoke(groceryList)
                 _addGroceryListResult.value = Result.Success(Unit)
+                getGroceryList()
             } catch (e: Exception) {
                 _addGroceryListResult.value = Result.Error(e)
                 Log.e("GroceryListViewModel", "Error adding grocery list: $e")
