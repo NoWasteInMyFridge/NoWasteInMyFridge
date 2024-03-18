@@ -2,9 +2,9 @@
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,8 +37,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -55,8 +56,8 @@ import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.feature.home.HomeViewModel
 import com.develop.nowasteinmyfridge.feature.inventory.InventoryViewModel
 import com.develop.nowasteinmyfridge.ui.theme.BaseColor
+import com.develop.nowasteinmyfridge.ui.theme.BaseGray
 import com.develop.nowasteinmyfridge.ui.theme.Black
-import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
 import com.develop.nowasteinmyfridge.ui.theme.White
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -222,21 +223,12 @@ fun SliderBoxComponent(
         itemsIndexed(names) { index, name ->
             Box(
                 modifier = Modifier
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.background)
                     .clickable {
                         selectedIndex = index
                     }
-                    .border(
-                        width = 2.dp,
-                        color = GrayPrimary,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .graphicsLayer(
-                        translationY = if (index == selectedIndex) -4F else 0F,
-                        shape = RoundedCornerShape(16.dp)
-                    )
                     .width(200.dp)
             ) {
                 Row(
@@ -261,6 +253,23 @@ fun SliderBoxComponent(
                         modifier = Modifier.padding(start = 8.dp)
                     )
                     Spacer(modifier = Modifier.width(16.dp))
+                }
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp) // Adjust the height of the shadow
+                        .align(Alignment.BottomCenter)
+                ) {
+                    drawIntoCanvas { canvas ->
+                        val shadowColor = BaseGray
+                        val shadowAlpha = 0.25f
+                        val shadowHeight = size.height
+                        drawRect(
+                            color = BaseGray.copy(alpha = 0.25f),
+                            topLeft = Offset(0f, 0f),
+                            size = Size(size.width, size.height)
+                        )
+                    }
                 }
             }
         }
@@ -289,23 +298,14 @@ fun SliderBoxComponentVertical(
                         selectedIndex = index
                         onItemClick(name, images.getOrNull(index) ?: "")
                     }
-                    .border(
-                        width = 2.dp,
-                        color = GrayPrimary,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .graphicsLayer(
-                        translationY = if (index == selectedIndex) -4F else 0F,
-                        shape = RoundedCornerShape(16.dp)
-                    )
                     .height(100.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxSize().padding(start = 40.dp),
+                    modifier = Modifier.fillMaxSize().padding(start = 20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
-                        modifier = Modifier.fillMaxHeight().width(220.dp).padding(end = 16.dp),
+                        modifier = Modifier.fillMaxHeight().width(250.dp).padding(end = 16.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
                         Text(
@@ -325,6 +325,24 @@ fun SliderBoxComponentVertical(
                             contentDescription = "Image for $name",
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.FillBounds,
+                        )
+                    }
+
+                }
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .align(Alignment.BottomCenter)
+                ) {
+                    drawIntoCanvas { canvas ->
+                        val shadowColor = BaseGray
+                        val shadowAlpha = 0.25f
+                        val shadowHeight = size.height
+                        drawRect(
+                            color = BaseGray.copy(alpha = 0.25f),
+                            topLeft = Offset(0f, 0f),
+                            size = Size(size.width, size.height)
                         )
                     }
                 }
