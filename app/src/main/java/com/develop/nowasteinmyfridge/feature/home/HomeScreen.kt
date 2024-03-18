@@ -61,7 +61,6 @@ import com.develop.nowasteinmyfridge.ui.theme.White
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
@@ -194,7 +193,6 @@ fun HomeScreen(
                                         images = recipeImages ?: emptyList(),
                                         onItemClick = { name, image ->
                                             navController.navigate("menu/${Uri.encode(name)}/${Uri.encode(image)}?ingredients=${Uri.encode(ingredientLines.joinToString(";"))}")
-//                                            navController.navigate("menu/${Uri.encode(name)}/${Uri.encode(image)}")
                                         }
                                     )
 
@@ -216,17 +214,16 @@ fun SliderBoxComponent(
     modifier: Modifier = Modifier
 ) {
     var selectedIndex by remember { mutableStateOf(0) }
-
     LazyRow(
         modifier = modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(84.dp)
     ) {
         itemsIndexed(names) { index, name ->
             Box(
                 modifier = Modifier
                     .padding(horizontal = 14.dp, vertical = 8.dp)
-                    .clip(MaterialTheme.shapes.medium)
+                    .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.background)
                     .clickable {
                         selectedIndex = index
@@ -245,14 +242,14 @@ fun SliderBoxComponent(
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(10.dp),
+                        .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     AsyncImage(
                         model = images.getOrNull(index),
                         contentDescription = "Image for $name",
                         modifier = Modifier
-                            .size(30.dp)
+                            .size(34.dp)
                             .clip(CircleShape),
                         contentScale = ContentScale.FillBounds
                     )
@@ -286,7 +283,7 @@ fun SliderBoxComponentVertical(
             Box(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
-                    .clip(MaterialTheme.shapes.medium)
+                    .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.background)
                     .clickable {
                         selectedIndex = index
@@ -308,7 +305,7 @@ fun SliderBoxComponentVertical(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
-                        modifier = Modifier.fillMaxHeight().width(250.dp),
+                        modifier = Modifier.fillMaxHeight().width(220.dp).padding(end = 16.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
                         Text(
@@ -320,13 +317,14 @@ fun SliderBoxComponentVertical(
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    Box(modifier = Modifier.fillMaxHeight()) {
-                        // Display the image here
+                    Box(
+                        modifier = Modifier.fillMaxHeight(),
+                    ) {
                         AsyncImage(
                             model = images.getOrNull(index),
                             contentDescription = "Image for $name",
                             modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.FillBounds
+                            contentScale = ContentScale.FillBounds,
                         )
                     }
                 }
