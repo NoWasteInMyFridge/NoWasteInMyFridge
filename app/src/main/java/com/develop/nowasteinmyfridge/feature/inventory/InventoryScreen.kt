@@ -1,6 +1,8 @@
 package com.develop.nowasteinmyfridge.feature.inventory
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,34 +13,49 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun InventoryScreen(
     inventoryViewModel: InventoryViewModel = hiltViewModel()
 ) {
     val ingredientsList by inventoryViewModel.ingredientsState
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        contentPadding = PaddingValues(16.dp)
+        Box(
+            modifier = Modifier.fillMaxWidth().padding(16.dp), Alignment.Center
+        ) {
+    Text(
+        text = "Inventory",
+        fontWeight = FontWeight.Bold,
+        fontSize = 30.sp
+    )
+        }
+    Column(
+        modifier = Modifier.padding(top = 60.dp)
     ) {
-        if (ingredientsList.isNotEmpty()) {
-            items(ingredientsList.size) { index ->
-                val ingredient = ingredientsList[index]
-                ShowingBox(ingredient = ingredient)
-            }
-        } else {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No ingredients available.")
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            contentPadding = PaddingValues(16.dp),
+        ) {
+            if (ingredientsList.isNotEmpty()) {
+                items(ingredientsList.size) { index ->
+                    val ingredient = ingredientsList[index]
+                    ShowingBox(ingredient = ingredient)
+                }
+            } else {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No ingredients available.")
+                    }
                 }
             }
         }

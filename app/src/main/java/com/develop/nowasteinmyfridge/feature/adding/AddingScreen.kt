@@ -1,19 +1,22 @@
 package com.develop.nowasteinmyfridge.feature.adding
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -49,7 +52,8 @@ import com.develop.nowasteinmyfridge.ui.theme.GreenButton
 import com.develop.nowasteinmyfridge.ui.theme.GreenPrimary
 import com.develop.nowasteinmyfridge.ui.theme.White
 import com.develop.nowasteinmyfridge.util.Result
-
+import java.text.SimpleDateFormat
+import java.util.*
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -59,17 +63,15 @@ fun AddingScreen(
 ) {
     var name by remember { mutableStateOf(TextFieldValue()) }
     var quantity by remember { mutableStateOf(TextFieldValue()) }
-    var mfg by remember { mutableStateOf(TextFieldValue()) }
-    var efd by remember { mutableStateOf(TextFieldValue()) }
-    var selectImageUri by remember {
-        mutableStateOf<Uri?>(null)
-    }
+    var mfgDate by remember { mutableStateOf(Calendar.getInstance()) }
+    var efdDate by remember { mutableStateOf(Calendar.getInstance()) }
+    var selectImageUri by remember { mutableStateOf<Uri?>(null) }
+
     val photoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = {
-            selectImageUri = it
-        }
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri: Uri? -> selectImageUri = uri }
     )
+
     val addIngredientResult by addingViewModel.addIngredientResult.collectAsStateWithLifecycle()
     val context = LocalContext.current
     Box(
@@ -185,12 +187,11 @@ fun AddingScreen(
                                     modifier = Modifier
                                         .padding(bottom = 10.dp)
                                 )
-                                InputFieldWithPlaceholder(
+                                ClickableTextWithPlaceholder(
                                     placeholder = stringResource(id = R.string.mfg_placeholder),
-                                    textValue = mfg,
-                                ) {
-                                    mfg = it
-                                }
+                                    date = mfgDate,
+                                    onDateSelected = { mfgDate = it }
+                                )
                             }
                             Spacer(modifier = Modifier.width(16.dp))
                             Column(
@@ -205,12 +206,12 @@ fun AddingScreen(
                                     modifier = Modifier
                                         .padding(bottom = 10.dp)
                                 )
-                                InputFieldWithPlaceholder(
-                                    stringResource(id = R.string.efd_placeholder),
-                                    efd,
-                                ) {
-                                    efd = it
-                                }
+                                ClickableTextWithPlaceholderWithNoValue(
+                                    placeholder = stringResource(id = R.string.efd_placeholder),
+                                    date = null,
+                                    onDateSelected = { efdDate = it }
+                                )
+
                             }
                         }
                         Row(
@@ -234,9 +235,7 @@ fun AddingScreen(
                                 ) {
                                     Button(
                                         onClick = {
-                                            photoPickerLauncher.launch(
-                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                            )
+                                            photoPickerLauncher.launch("image/*")
                                         },
                                         colors = ButtonDefaults.buttonColors(containerColor = GreenButton),
                                     ) {
@@ -261,8 +260,8 @@ fun AddingScreen(
                                                     name = name.text,
                                                     quantity = quantity.text.toIntOrNull() ?: 0,
                                                     image = selectImageUri,
-                                                    mfg = mfg.text,
-                                                    efd = efd.text,
+                                                    mfg = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(mfgDate.time),
+                                                    efd = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(efdDate.time),
                                                 )
                                             )
                                         },
@@ -295,7 +294,6 @@ fun AddingScreen(
         }
     }
 }
-
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -402,6 +400,154 @@ fun InputFieldWithPlaceholderWithBorder(
                     .background(Color.Transparent)
                     .align(Alignment.Center),
                 textAlign = TextAlign.Start
+            )
+        }
+    }
+}
+
+@Composable
+fun ClickableTextWithPlaceholder(
+    placeholder: String,
+    date: Calendar,
+    onDateSelected: (Calendar) -> Unit
+) {
+    val context = LocalContext.current
+
+    Box(
+        modifier = Modifier
+            .border(
+                width = 1.dp,
+                color = Color.Black,
+                shape = RoundedCornerShape(10.dp)
+            )
+            .height(40.dp)
+            .clickable {
+                DatePickerDialog(
+                    context,
+                    { _, year, month, dayOfMonth ->
+                        val selectedDate = Calendar.getInstance()
+                        selectedDate.set(year, month, dayOfMonth)
+                        onDateSelected(selectedDate)
+                    },
+                    date.get(Calendar.YEAR),
+                    date.get(Calendar.MONTH),
+                    date.get(Calendar.DAY_OF_MONTH)
+                ).show()
+            }
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = date.let {
+                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(it.time)
+                } ?: placeholder,
+                color = Color.Black,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 20.dp)
+                    .background(Color.Transparent)
+                    .align(Alignment.CenterVertically),
+                textAlign = TextAlign.Start
+            )
+
+            Icon(
+                imageVector = Icons.Filled.CalendarToday,
+                contentDescription = "Calendar",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(end = 8.dp)
+                    .clickable {
+                        DatePickerDialog(
+                            context,
+                            { _, year, month, dayOfMonth ->
+                                val selectedDate = Calendar.getInstance()
+                                selectedDate.set(year, month, dayOfMonth)
+                                onDateSelected(selectedDate)
+                            },
+                            date.get(Calendar.YEAR),
+                            date.get(Calendar.MONTH),
+                            date.get(Calendar.DAY_OF_MONTH)
+                        ).show()
+                    }
+            )
+        }
+    }
+}
+
+@Composable
+fun ClickableTextWithPlaceholderWithNoValue(
+    placeholder: String,
+    date: Calendar?,
+    onDateSelected: (Calendar) -> Unit
+) {
+    val context = LocalContext.current
+    val formattedDate = remember { mutableStateOf(placeholder) }
+
+    Box(
+        modifier = Modifier
+            .border(
+                width = 1.dp,
+                color = Color.Black,
+                shape = RoundedCornerShape(10.dp)
+            )
+            .height(40.dp)
+            .clickable {
+                DatePickerDialog(
+                    context,
+                    { _, year, month, dayOfMonth ->
+                        val selectedDate = Calendar.getInstance()
+                        selectedDate.set(year, month, dayOfMonth)
+                        formattedDate.value = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedDate.time)
+                        onDateSelected(selectedDate)
+                    },
+                    date?.get(Calendar.YEAR) ?: Calendar.getInstance().get(Calendar.YEAR),
+                    date?.get(Calendar.MONTH) ?: Calendar.getInstance().get(Calendar.MONTH),
+                    date?.get(Calendar.DAY_OF_MONTH) ?: Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+                ).show()
+            }
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = formattedDate.value,
+                color = Color.Black,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 20.dp)
+                    .background(Color.Transparent)
+                    .align(Alignment.CenterVertically),
+                textAlign = TextAlign.Start
+            )
+            Icon(
+                imageVector = Icons.Filled.CalendarToday,
+                contentDescription = "Calendar",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(end = 8.dp)
+                    .clickable {
+                        DatePickerDialog(
+                            context,
+                            { _, year, month, dayOfMonth ->
+                                val selectedDate = Calendar.getInstance()
+                                selectedDate.set(year, month, dayOfMonth)
+                                formattedDate.value = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedDate.time)
+                                onDateSelected(selectedDate)
+                            },
+                            date?.get(Calendar.YEAR) ?: Calendar.getInstance().get(Calendar.YEAR),
+                            date?.get(Calendar.MONTH) ?: Calendar.getInstance().get(Calendar.MONTH),
+                            date?.get(Calendar.DAY_OF_MONTH) ?: Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+                        ).show()
+                    }
             )
         }
     }
