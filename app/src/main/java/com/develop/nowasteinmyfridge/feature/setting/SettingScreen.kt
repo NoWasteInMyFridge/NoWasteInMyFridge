@@ -183,7 +183,7 @@ fun SettingScreen(
         }
 
         else -> {
-            "Loading"
+            stringResource(id = R.string.loading)
         }
     }
 

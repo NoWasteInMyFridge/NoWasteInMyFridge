@@ -1,6 +1,6 @@
 package com.develop.nowasteinmyfridge
 
-import HomeScreen
+import com.develop.nowasteinmyfridge.feature.home.HomeScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -31,19 +31,6 @@ fun BottomNavGraph(navController: NavHostController) {
             AddingScreen(navController)
         }
         settingNavGraph(navController)
-//        composable(
-//            route = MENU_SCREEN_ROUTE,
-//            arguments = listOf(
-//                navArgument("name") { type = NavType.StringType },
-//                navArgument("image") { type = NavType.StringType }
-//            )
-//        ) { backStackEntry ->
-//            val name = backStackEntry.arguments?.getString("name")
-//            val image = backStackEntry.arguments?.getString("image")
-//            if (name != null && image != null) {
-//                MenuScreen(name = name, image = image)
-//            }
-//        }
         composable(
             route = MENU_SCREEN_ROUTE,
             arguments = listOf(
