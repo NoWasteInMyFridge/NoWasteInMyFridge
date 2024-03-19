@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">NoWasteInMyFridge</string>
     <string name="welcome_message">welcome</string>
+    <string name="ingredient">Ingredient</string>
+    <string name="label_suggest_menu">Today Option</string>
+    <string name="no_suggest_menu">No suggested menu is available today</string>
+    <string name="loading">Loading…</string>
     <string name="forget_password">forget your password?</string>
     <string name="login">LOGIN</string>
     <string name="need_sign_in">Don’t have account, sign-in</string>
@@ -13,6 +17,8 @@
     <string name="menu_notification">Notification</string>
     <string name="menu_password">Password</string>
     <string name="menu_language">Language</string>
+    <string name="menu_grocery">Grocery List</string>
+    <string name="menu_waste_report">Waste report</string>
 
     <string name="inventory">INVENTORY</string>
     <string name="inventory_info">Add your ingredient</string>
@@ -36,4 +42,5 @@
     <string name="label_password">Password</string>
     <string name="label_birthday_user_profile">Birthday</string>
     <string name="btn_signup">Sign up</string>
+
 </resources>

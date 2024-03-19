@@ -131,3 +131,6 @@ app/release/output.json
 .idea/codeStyles/
 
 .idea
+
+# env file
+.env

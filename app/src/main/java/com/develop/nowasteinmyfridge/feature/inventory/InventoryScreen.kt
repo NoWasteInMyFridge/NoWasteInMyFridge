@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,42 +22,50 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 
-@SuppressLint("SuspiciousIndentation")
+@SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InventoryScreen(
     inventoryViewModel: InventoryViewModel = hiltViewModel()
 ) {
     val ingredientsList by inventoryViewModel.ingredientsState
-        Box(
-            modifier = Modifier.fillMaxWidth().padding(16.dp), Alignment.Center
+    Scaffold {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-    Text(
-        text = "Inventory",
-        fontWeight = FontWeight.Bold,
-        fontSize = 30.sp
-    )
-        }
-    Column(
-        modifier = Modifier.padding(top = 60.dp)
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            contentPadding = PaddingValues(16.dp),
-        ) {
-            if (ingredientsList.isNotEmpty()) {
-                items(ingredientsList.size) { index ->
-                    val ingredient = ingredientsList[index]
-                    ShowingBox(ingredient = ingredient)
-                }
-            } else {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("No ingredients available.")
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(16.dp).height(80.dp),
+                Alignment.BottomCenter
+            ) {
+                Text(
+                    text = "Inventory",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 30.sp
+                )
+            }
+            Column(
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    contentPadding = PaddingValues(16.dp),
+                ) {
+                    if (ingredientsList.isNotEmpty()) {
+                        items(ingredientsList.size) { index ->
+                            val ingredient = ingredientsList[index]
+                            ShowingBox(ingredient = ingredient)
+                        }
+                    } else {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("No ingredients available.")
+                            }
+                        }
                     }
                 }
             }

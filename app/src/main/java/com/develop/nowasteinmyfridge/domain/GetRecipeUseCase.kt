@@ -1,6 +1,6 @@
 package com.develop.nowasteinmyfridge.domain
 
-import RecipeSearchResponse
+import com.develop.nowasteinmyfridge.data.model.RecipeSearchResponse
 import com.develop.nowasteinmyfridge.data.repository.RecipeRepository
 import javax.inject.Inject
 

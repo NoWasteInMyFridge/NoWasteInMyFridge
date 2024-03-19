@@ -1,11 +1,11 @@
 package com.develop.nowasteinmyfridge.feature.home
 
-import RecipeSearchResponse
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.develop.nowasteinmyfridge.data.model.RecipeSearchResponse
 import com.develop.nowasteinmyfridge.domain.GetRecipeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,10 +16,10 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getRecipeUseCase: GetRecipeUseCase,
 ) : ViewModel() {
-    private val _recipesState = mutableStateOf<RecipeSearchResponse>(RecipeSearchResponse(emptyList()))
+
+    private val _recipesState = mutableStateOf(RecipeSearchResponse())
     val recipesState: State<RecipeSearchResponse>
         get() = _recipesState
-
 
     fun searchRecipes(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
