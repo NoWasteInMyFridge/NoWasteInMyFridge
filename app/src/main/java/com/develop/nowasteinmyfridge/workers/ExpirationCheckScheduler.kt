@@ -16,8 +16,8 @@ class ExpirationCheckScheduler @Inject constructor(
 ) {
     fun scheduleDailyCheck() {
         val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 9) // Set the hour to 9 AM
-            set(Calendar.MINUTE, 0) // Set the minute to 0
+            set(Calendar.HOUR_OF_DAY, 5) // Set the hour to 9 AM
+            set(Calendar.MINUTE, 55) // Set the minute to 0
         }
 
         val currentTime = Calendar.getInstance()
