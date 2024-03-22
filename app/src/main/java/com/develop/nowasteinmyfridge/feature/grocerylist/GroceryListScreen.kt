@@ -42,6 +42,15 @@ import com.develop.nowasteinmyfridge.feature.grocerylist.GroceryListViewModel
 import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
 import com.develop.nowasteinmyfridge.ui.theme.YellowBtn
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.text.style.TextDecoration
+import java.util.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
+import com.develop.nowasteinmyfridge.ui.theme.Black
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -91,13 +100,21 @@ fun GroceryListScreen(
                             fontSize = 28.sp,
                             fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                         )
-                        Spacer(modifier = Modifier.height(50.dp))
-                        LazyColumn {
-                            items(groceryListState.size) { index ->
-                                val groceryItem = groceryListState[index]
-                                GroceryList(groceryItem.name, groceryItem.quantity)
-                            }
+                        TextButton(onClick = {
+                            groceryListViewModel.clearGroceryList()
+                        }) {
+                            Text(text = "Finish Shopping")
                         }
+                        Spacer(modifier = Modifier.height(50.dp))
+                        LazyColumn(
+                            modifier = Modifier
+                                .height(400.dp)
+                        ){
+                                items(groceryListState.size) { index ->
+                                    val groceryItem = groceryListState[index]
+                                    GroceryList(groceryItem.name, groceryItem.quantity)
+                                }
+                            }
                     }
                     Row(
                         verticalAlignment = Alignment.Bottom,
@@ -108,6 +125,7 @@ fun GroceryListScreen(
                             .padding(end = 16.dp)
                     ) {
                         PlusButton(groceryListViewModel)
+//                        Spacer(modifier = Modifier.width(16.dp))
                     }
                 }
             }
@@ -117,19 +135,23 @@ fun GroceryListScreen(
 
 @Composable
 fun GroceryList(name: String, quantity: Int) {
+    var strikedOut by remember { mutableStateOf(false) }
+    val textDecoration = if (strikedOut) TextDecoration.LineThrough else null
+    val onClick = { strikedOut = !strikedOut }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .height(46.dp)
-            .background(color = com.develop.nowasteinmyfridge.ui.theme.BasePrimaryGray)
-            .padding(bottom= 10.dp)
+            .padding(bottom = 10.dp)
+            .clickable(onClick = onClick)
     ) {
         Box(
             modifier = Modifier
                 .width(18.dp)
                 .height(46.dp)
-                .background(color = com.develop.nowasteinmyfridge.ui.theme.BaseGreen)
+                .background(color = if (strikedOut) Color.Red else com.develop.nowasteinmyfridge.ui.theme.BaseGreen)
         )
         Box(
             modifier = Modifier
@@ -147,7 +169,8 @@ fun GroceryList(name: String, quantity: Int) {
                 Text(
                     text = name,
                     fontSize = 18.sp,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                    color = if (strikedOut) Color.Red else Black,
+                    textDecoration = textDecoration,
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -161,7 +184,6 @@ fun GroceryList(name: String, quantity: Int) {
                         text = quantity.toString(),
                         fontSize = 18.sp,
                         color = com.develop.nowasteinmyfridge.ui.theme.BaseGray,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                 }
@@ -169,6 +191,7 @@ fun GroceryList(name: String, quantity: Int) {
         }
     }
 }
+
 
 
 @Composable
@@ -246,6 +269,8 @@ fun PlusButton(groceryListViewModel: GroceryListViewModel) {
                                         )
                                     )
                                 }
+                                nameState.value = ""
+                                quantityState.value = ""
                             }
                         ) {
                             Text(text = "Confirm")
