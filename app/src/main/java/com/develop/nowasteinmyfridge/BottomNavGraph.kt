@@ -1,6 +1,5 @@
 package com.develop.nowasteinmyfridge
 
-
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -15,6 +14,8 @@ import com.develop.nowasteinmyfridge.feature.setting.navigation.settingNavGraph
 
 const val MAIN_GRAPH_ROUTE = "main"
 const val MENU_SCREEN_ROUTE = "menu/{name}/{image}"
+const val BACK_TO_APP_ROUTE = "back_to_app"
+
 @Composable
 fun BottomNavGraph(navController: NavHostController) {
     NavHost(
@@ -32,19 +33,6 @@ fun BottomNavGraph(navController: NavHostController) {
             AddingScreen(navController)
         }
         settingNavGraph(navController)
-//        composable(
-//            route = MENU_SCREEN_ROUTE,
-//            arguments = listOf(
-//                navArgument("name") { type = NavType.StringType },
-//                navArgument("image") { type = NavType.StringType }
-//            )
-//        ) { backStackEntry ->
-//            val name = backStackEntry.arguments?.getString("name")
-//            val image = backStackEntry.arguments?.getString("image")
-//            if (name != null && image != null) {
-//                MenuScreen(name = name, image = image)
-//            }
-//        }
         composable(
             route = MENU_SCREEN_ROUTE,
             arguments = listOf(
@@ -61,6 +49,9 @@ fun BottomNavGraph(navController: NavHostController) {
             if (name != null && image != null) {
                 MenuScreen(name = name, image = image, ingredients = ingredients)
             }
+        }
+        composable(route = BACK_TO_APP_ROUTE) {
+            AppNavHost()
         }
     }
 }
