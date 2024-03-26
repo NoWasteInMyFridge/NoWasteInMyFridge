@@ -1,4 +1,4 @@
-package com.develop.nowasteinmyfridge.feature.inventory
+package com.develop.nowasteinmyfridge.feature.inventory.component
 
 //import androidx.compose.material3.icons.MaterialIcons
 import androidx.compose.foundation.Image
@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.develop.nowasteinmyfridge.data.model.Ingredient
 
 @Composable
@@ -45,8 +45,6 @@ fun ShowingBox(
             },
         contentAlignment = Alignment.BottomEnd
     ) {
-//        var isDeleteVisible by remember { mutableStateOf(false) }
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -83,7 +81,7 @@ fun ShowingBox(
         }
 
         Image(
-            painter = rememberImagePainter(ingredient.image),
+            painter = rememberAsyncImagePainter(ingredient.image),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier

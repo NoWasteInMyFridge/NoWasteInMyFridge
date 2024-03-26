@@ -6,7 +6,7 @@ import javax.inject.Inject
 class DeleteIngredientUseCase @Inject constructor(
     private val firestoreRepository: FirebaseFirestoreRepository
 ) {
-    suspend fun deleteIngredient(ingredientName: String) {
-        firestoreRepository.deleteIngredient(ingredientName)
+    suspend operator fun invoke(ingredientID: String) {
+        firestoreRepository.deleteIngredient(ingredientID)
     }
 }

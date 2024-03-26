@@ -14,16 +14,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.develop.nowasteinmyfridge.R
+import com.develop.nowasteinmyfridge.feature.inventory.component.ShowingBox
 
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -31,7 +34,7 @@ fun InventoryScreen(
     inventoryViewModel: InventoryViewModel = hiltViewModel()
 ) {
     val ingredientsList by inventoryViewModel.ingredientsState
-    var selectedIngredientIndex by remember { mutableStateOf(-1) }
+    var selectedIngredientIndex by remember { mutableIntStateOf(-1) }
     Scaffold {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -63,9 +66,7 @@ fun InventoryScreen(
                             ShowingBox(
                                 ingredient = ingredient,
                                 onDeleteClicked = {
-                                    inventoryViewModel.deleteIngredient(ingredient.name)
-                                    // Handle deletion here
-//                                    onDeleteIngredient(index)
+                                    inventoryViewModel.deleteIngredient(ingredient.id)
                                 }
                             )
                                 selectedIngredientIndex = index
@@ -78,7 +79,7 @@ fun InventoryScreen(
                                     .padding(16.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("No ingredients available.")
+                                Text(stringResource(id = R.string.no_ingredients_available))
                             }
                         }
                     }

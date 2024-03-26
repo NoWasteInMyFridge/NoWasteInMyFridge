@@ -44,4 +44,5 @@
     <string name="btn_signup">Sign up</string>
 
     <string name="logout">Log out</string>
+    <string name="no_ingredients_available">No ingredients available</string>
 </resources>

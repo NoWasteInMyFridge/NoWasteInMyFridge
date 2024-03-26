@@ -20,8 +20,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
-import okhttp3.internal.wait
 import javax.inject.Inject
 
 class FirebaseFirestoreRepositoryImpl @Inject constructor(
@@ -33,23 +31,20 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
     private val userEmail = firebaseAuth.currentUser?.email.orEmpty()
     private val storageRef = firebaseStorage.reference
 
-    override suspend fun deleteIngredient(ingredientName: String): Result<Unit> {
+    override suspend fun deleteIngredient(ingredientID: String): Result<Unit> {
         return try {
             val querySnapshot = db.collection("users/$userEmail/ingredients")
-                .whereEqualTo("name", ingredientName)
+                .whereEqualTo("id", ingredientID)
                 .get()
                 .await()
             if (!querySnapshot.isEmpty) {
-                // Since there could be multiple ingredients with the same name, delete all of them
-                for (document in querySnapshot.documents) {
-                    document.reference.delete().await()
-                }
+                val documentReference = querySnapshot.documents[0].reference
+                documentReference.delete().await()
                 Result.Success(Unit)
             } else {
                 Result.Error(Exception("Ingredient not found"))
             }
         } catch (e: Exception) {
-            // Handle any errors
             Log.e("FirestoreError", "Error deleting ingredient: $e")
             Result.Error(e)
         }
@@ -91,7 +86,7 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
             val querySnapshot = db.collection("users/$userEmail/groceryList").get().await()
             groceryLists = querySnapshot.toObjects(GroceryList::class.java)
         } catch (e: FirebaseFirestoreException) {
-            Log.d("error", "getGrocery: $e")
+            Log.d("Error", "Unable to getGrocery: $e")
         }
         return groceryLists
     }
@@ -102,13 +97,14 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
             val querySnapshot = db.collection("users/$userEmail/ingredients").get().await()
             ingredients = querySnapshot.toObjects(Ingredient::class.java)
         } catch (e: FirebaseFirestoreException) {
-            Log.d("error", "getIngredient: $e")
+            Log.d("Error", "Unable to getIngredient: $e")
         }
         return ingredients
     }
 
     override suspend fun addIngredient(ingredient: IngredientCreate) {
         try {
+            val ingredientId = db.collection("users/$userEmail/ingredients").document().id
             val image = ingredient.image
             if (image != null) {
                 val ref = storageRef.child("users/$userEmail/ingredients/${image.lastPathSegment}")
@@ -117,28 +113,37 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
                     val taskSnapshot = uploadTask.await()
                     val imageUrl =
                         taskSnapshot.metadata!!.reference!!.downloadUrl.await().toString()
-                    db.collection("users/$userEmail/ingredients")
-                        .add(
-                            Ingredient(
-                                name = ingredient.name,
-                                quantity = ingredient.quantity,
-                                image = imageUrl,
-                                mfg = ingredient.mfg,
-                                efd = ingredient.efd,
-                            )
-                        ).await()
+                    val newIngredient = Ingredient(
+                        id = ingredientId,
+                        name = ingredient.name,
+                        quantity = ingredient.quantity,
+                        image = imageUrl,
+                        mfg = ingredient.mfg,
+                        efd = ingredient.efd,
+                    )
+                    db.collection("users/$userEmail/ingredients").document(ingredientId)
+                        .set(newIngredient)
+                        .await()
                 } catch (uploadException: Exception) {
-                    Log.e("ImageUpload", "Error uploading image: $uploadException")
+                    Log.e("Error", "Error uploading image: $uploadException")
                 }
             } else {
-                db.collection("users/$userEmail/ingredients")
-                    .add(ingredient)
+                val newIngredient = Ingredient(
+                    id = ingredientId,
+                    name = ingredient.name,
+                    quantity = ingredient.quantity,
+                    mfg = ingredient.mfg,
+                    efd = ingredient.efd,
+                )
+                db.collection("users/$userEmail/ingredients").document(ingredientId)
+                    .set(newIngredient)
                     .await()
             }
         } catch (e: FirebaseFirestoreException) {
             Log.d("FirestoreError", "Error adding ingredient to Firestore: $e")
         }
     }
+
 
     override suspend fun getUserInfo(): Flow<Result<UserProfile>> {
         return flow {

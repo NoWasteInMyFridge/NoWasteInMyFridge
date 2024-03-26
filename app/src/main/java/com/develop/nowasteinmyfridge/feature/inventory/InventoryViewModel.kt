@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class InventoryViewModel @Inject constructor(
     private val getIngredientsUseCase: GetIngredientsUseCase,
-    private val deleteIngredientUseCase: DeleteIngredientUseCase
+    private val deleteIngredientUseCase: DeleteIngredientUseCase,
 ) : ViewModel() {
     private val _ingredientsState = mutableStateOf<List<Ingredient>>(emptyList())
     val ingredientsState: State<List<Ingredient>>
@@ -29,19 +29,21 @@ class InventoryViewModel @Inject constructor(
     }
 
     private suspend fun getIngredients() {
-        _ingredientsState.value = getIngredientsUseCase.invoke()
+        try {
+            _ingredientsState.value = getIngredientsUseCase.invoke()
+        } catch (e: Exception) {
+            Log.e("getIngredients", "Unable to getIngredients", e)
+        }
+
     }
 
-    fun deleteIngredient(ingredientName: String) {
+    fun deleteIngredient(ingredientID: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val ingredientToDelete = _ingredientsState.value.find { it.name == ingredientName }
-                ingredientToDelete?.let { ingredient ->
-                    deleteIngredientUseCase.deleteIngredient(ingredient.name)
-                }
+                deleteIngredientUseCase.invoke(ingredientID)
                 getIngredients()
             } catch (e: Exception) {
-                Log.e("","",e)
+                Log.e("deleteIngredient", "Unable to delete Ingredient", e)
             }
         }
     }
