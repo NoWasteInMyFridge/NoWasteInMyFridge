@@ -204,7 +204,8 @@ fun HomeScreen(
                                 SliderBoxComponentVertical(
                                     names = recipeNames,
                                     images = recipeImages,
-                                    onItemClick = { name, image ->
+                                    ingredientLines = ingredientLines,
+                                    onItemClick = { name, image, _ ->
                                         navController.navigate(
                                             "menu/${Uri.encode(name)}/${
                                                 Uri.encode(
@@ -299,8 +300,9 @@ fun SliderBoxComponent(
 fun SliderBoxComponentVertical(
     names: List<String>,
     images: List<String>,
+    ingredientLines:  List<String>,
     modifier: Modifier = Modifier,
-    onItemClick: (String, String) -> Unit
+    onItemClick: (String, String, String) -> Unit
 ) {
     var selectedIndex by remember { mutableIntStateOf(0) }
 
@@ -310,12 +312,12 @@ fun SliderBoxComponentVertical(
         itemsIndexed(names) { index, name ->
             Box(
                 modifier = Modifier
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 4.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.background)
                     .clickable {
                         selectedIndex = index
-                        onItemClick(name, images.getOrNull(index) ?: "")
+                        onItemClick(name, images.getOrNull(index) ?: "", ingredientLines[index])
                     }
                     .height(100.dp)
             ) {
