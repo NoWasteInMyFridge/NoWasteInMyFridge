@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Man
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,10 +35,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import com.develop.nowasteinmyfridge.BACK_TO_APP_ROUTE
 import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.data.model.UserProfile
 import com.develop.nowasteinmyfridge.util.Result
@@ -45,7 +47,8 @@ import com.develop.nowasteinmyfridge.util.Result
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AccountScreen(
-    accountViewModel: AccountViewModel = hiltViewModel()
+    accountViewModel: AccountViewModel = hiltViewModel(),
+    navController: NavHostController,
 ) {
     val userInfoState by accountViewModel.userProfileInfoState.collectAsState()
     val painter = when (val result = userInfoState) {
@@ -78,6 +81,16 @@ fun AccountScreen(
             UserProfileHeader(imageProfile = painter)
             Spacer(modifier = Modifier.height(16.dp))
             UserProfileContent(userProfile = userProfile)
+            // Logout button
+            OutlinedButton(
+                onClick = {
+                    accountViewModel.logout()// Logout logic
+                    navController.navigate(BACK_TO_APP_ROUTE)
+                },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(text = stringResource(id = R.string.logout))
+            }
         }
     }
 }
@@ -161,8 +174,3 @@ fun UserDetailItem(
     }
 }
 
-@Preview
-@Composable
-fun AccountScreenPreview() {
-    AccountScreen()
-}
