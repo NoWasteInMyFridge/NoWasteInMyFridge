@@ -1,6 +1,6 @@
 package com.develop.nowasteinmyfridge.data.repository
 
-import com.develop.nowasteinmyfridge.data.model.EdamamApi
+import com.develop.nowasteinmyfridge.data.api.EdamamApi
 import com.develop.nowasteinmyfridge.data.model.RecipeSearchResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

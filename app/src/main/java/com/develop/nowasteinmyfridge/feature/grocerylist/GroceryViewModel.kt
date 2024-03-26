@@ -8,17 +8,20 @@ import androidx.lifecycle.viewModelScope
 import com.develop.nowasteinmyfridge.data.model.GroceryList
 import com.develop.nowasteinmyfridge.data.model.GroceryListCreate
 import com.develop.nowasteinmyfridge.domain.AddGroceryListUseCase
+import com.develop.nowasteinmyfridge.domain.ClearGroceryListUseCase
 import com.develop.nowasteinmyfridge.domain.GetGroceryListUseCase
 import com.develop.nowasteinmyfridge.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 import javax.inject.Inject
 
 @HiltViewModel
 class GroceryListViewModel @Inject constructor(
     private val addGroceryListUseCase: AddGroceryListUseCase,
-    private val getGroceryListUseCase: GetGroceryListUseCase
+    private val getGroceryListUseCase: GetGroceryListUseCase,
+    private val clearGroceryListUseCase: ClearGroceryListUseCase,
 ) : ViewModel() {
 
     private val _addGroceryListResult = mutableStateOf<Result<Unit>?>(null)
@@ -47,6 +50,16 @@ class GroceryListViewModel @Inject constructor(
             } catch (e: Exception) {
                 _addGroceryListResult.value = Result.Error(e)
                 Log.e("GroceryListViewModel", "Error adding grocery list: $e")
+            }
+        }
+    }
+    fun clearGroceryList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                clearGroceryListUseCase.invoke()
+                getGroceryList()
+            } catch (e: Exception) {
+                Log.e("GroceryListViewModel", "Error clearing grocery list: $e")
             }
         }
     }
