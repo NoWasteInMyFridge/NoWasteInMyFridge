@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTimeFilled
@@ -30,19 +31,70 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.develop.nowasteinmyfridge.ui.theme.White
 
+@Composable
+fun DisplayIngredients(ingredients: String) {
+    val formattedIngredients = ingredients.split(",")
+        .joinToString(separator = "\n • ", prefix = " • ") {
+            it.trim()
+        }
+
+    Text(
+        text = formattedIngredients
+    )
+}
+
+@Composable
+fun OvalIconView(icon: ImageVector, text: String) {
+    Box(
+        modifier = Modifier
+            .height(96.dp)
+            .width(70.dp)
+            .background(Color.Gray, RoundedCornerShape(100.dp)),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .offset(y = (10).dp)
+                    .background(Color.White, RoundedCornerShape(100.dp))
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(34.dp)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(14.dp))
+            Text(
+                text = text,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Normal,
+                color = White,
+            )
+        }
+    }
+}
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MenuScreen(name: String, image: String, ingredients: List<String>) {
+fun MenuScreen(name: String?, image: String?, ingredients: String?) {
     Scaffold {
         Column(
             modifier = Modifier
@@ -86,11 +138,13 @@ fun MenuScreen(name: String, image: String, ingredients: List<String>) {
                         verticalArrangement = Arrangement.SpaceBetween
                     )
                     {
-                        Text(
-                            text = name,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
+                        name?.let {
+                            Text(
+                                text = it,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                        }
                         Spacer(modifier = Modifier.height(16.dp))
                         Column(
 //                            modifier = Modifier.fillMaxSize(),
@@ -99,9 +153,15 @@ fun MenuScreen(name: String, image: String, ingredients: List<String>) {
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                OvalIconView(icon = Icons.Default.AccessTimeFilled, text = "40 mins")
+                                OvalIconView(
+                                    icon = Icons.Default.AccessTimeFilled,
+                                    text = "40 mins"
+                                )
                                 OvalIconView(icon = Icons.Default.Fastfood, text = "40 mins")
-                                OvalIconView(icon = Icons.Default.LocalFireDepartment, text = "40 mins")
+                                OvalIconView(
+                                    icon = Icons.Default.LocalFireDepartment,
+                                    text = "40 mins"
+                                )
                                 OvalIconView(icon = Icons.Default.Bookmark, text = "40 mins")
                             }
                         }
@@ -114,85 +174,17 @@ fun MenuScreen(name: String, image: String, ingredients: List<String>) {
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold,
                             )
-                            Text(
-                                text = buildAnnotatedString {
-                                    ingredients.forEach { ingredient ->
-                                        withStyle(style = SpanStyle(fontSize = 16.sp)) {
-                                            append("• ")
-                                        }
-                                        append(ingredient)
-                                        append("\n")
-                                    }
-                                },
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = Color.Black
-                            )
+                            LazyColumn(
+                                modifier = Modifier.height(200.dp)
+                            ) {
+                                item {
+                                    DisplayIngredients(ingredients.toString())
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }
-}
-
-@Composable
-fun OvalIconView(icon: ImageVector, text: String){
-    Box(
-        modifier = Modifier
-            .height(96.dp)
-            .width(70.dp)
-            .background(Color.Gray, RoundedCornerShape(100.dp)),
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .offset(y = (10).dp)
-                    .background(Color.White, RoundedCornerShape(100.dp))
-            ){
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(34.dp)
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(14.dp))
-            Text(
-                text = text,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Normal,
-                color = White,
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun MenuScreenPreview() {
-    val ingredients = listOf(
-        "1/2 cup olive oil",
-        "5 cloves garlic, peeled",
-        "2 large russet potatoes, peeled and cut into chunks",
-        "1 3-4 pound chicken, cut into 8 pieces (or 3 pound chicken legs)",
-        "3/4 cup white wine",
-        "3/4 cup chicken stock",
-        "3 tablespoons chopped parsley",
-        "1 tablespoon dried oregano",
-        "Salt and pepper",
-        "1 cup frozen peas, thawed"
-    )
-    MenuScreen(name = "Green pepper Salad With Teriyaki chicken", image = "https://simply-delicious-food.com/wp-content/uploads/2019/07/blt-chicken-salad-3-2.jpg", ingredients = ingredients)
 }

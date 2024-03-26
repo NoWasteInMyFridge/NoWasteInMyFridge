@@ -1,19 +1,19 @@
 package com.develop.nowasteinmyfridge
 
-import com.develop.nowasteinmyfridge.feature.home.HomeScreen
+
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.develop.nowasteinmyfridge.feature.adding.AddingScreen
+import com.develop.nowasteinmyfridge.feature.home.HomeScreen
 import com.develop.nowasteinmyfridge.feature.home.MenuScreen
 import com.develop.nowasteinmyfridge.feature.inventory.InventoryScreen
 import com.develop.nowasteinmyfridge.feature.setting.navigation.settingNavGraph
 
 const val MAIN_GRAPH_ROUTE = "main"
-const val MENU_SCREEN_ROUTE = "menu/{name}/{image}"
+const val MENU_SCREEN_ROUTE = "menu/{name}/{image}/{ingredients}"
 @Composable
 fun BottomNavGraph(navController: NavHostController) {
     NavHost(
@@ -33,20 +33,18 @@ fun BottomNavGraph(navController: NavHostController) {
         settingNavGraph(navController)
         composable(
             route = MENU_SCREEN_ROUTE,
-            arguments = listOf(
-                navArgument("name") { type = NavType.StringType },
-                navArgument("image") { type = NavType.StringType },
-                navArgument("ingredients") { type = NavType.StringType }
-            )
         ) { backStackEntry ->
-            val name = backStackEntry.arguments?.getString("name")
-            val image = backStackEntry.arguments?.getString("image")
-            val ingredientsString = backStackEntry.arguments?.getString("ingredients")
-            val ingredients = ingredientsString?.split(";") ?: emptyList()
+            val arguments = requireNotNull(backStackEntry.arguments)
+            val name = arguments.getString("name") ?: ""
+            val image = arguments.getString("image") ?: ""
+            val ingredients = arguments.getString("ingredients") ?: ""
 
-            if (name != null && image != null) {
-                MenuScreen(name = name, image = image, ingredients = ingredients)
-            }
+            Log.d("MenuScreen", "Pop $ingredients")
+            MenuScreen(
+                name = name,
+                image = image,
+                ingredients = ingredients
+            )
         }
     }
 }
