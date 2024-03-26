@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.develop.nowasteinmyfridge.data.model.UserProfile
 import com.develop.nowasteinmyfridge.domain.GetUserInfoUseCase
+import com.develop.nowasteinmyfridge.domain.LogoutUseCase
 import com.develop.nowasteinmyfridge.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AccountViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
-) : ViewModel(){
+    private val logoutUseCase: LogoutUseCase,
+) : ViewModel() {
     private val _userProfileInfoState = MutableStateFlow<Result<UserProfile>>(Result.Loading)
     val userProfileInfoState: StateFlow<Result<UserProfile>>
         get() = _userProfileInfoState.asStateFlow()
@@ -32,5 +34,11 @@ class AccountViewModel @Inject constructor(
             .collect { result ->
                 _userProfileInfoState.value = result
             }
+    }
+
+    fun logout() {
+        viewModelScope.launch(Dispatchers.IO) {
+            logoutUseCase.invoke()
+        }
     }
 }

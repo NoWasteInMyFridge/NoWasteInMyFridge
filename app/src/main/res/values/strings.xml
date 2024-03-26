@@ -43,4 +43,5 @@
     <string name="label_birthday_user_profile">Birthday</string>
     <string name="btn_signup">Sign up</string>
 
+    <string name="logout">Log out</string>
 </resources>

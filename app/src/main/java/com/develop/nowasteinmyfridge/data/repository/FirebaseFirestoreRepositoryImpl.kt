@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import okhttp3.internal.wait
 import javax.inject.Inject
 
 class FirebaseFirestoreRepositoryImpl @Inject constructor(
@@ -71,7 +73,7 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
         try {
             db.collection("users/$userEmail/groceryList")
                 .add(
-                    com.develop.nowasteinmyfridge.data.model.GroceryList(
+                    GroceryList(
                         name = groceryList.name,
                         quantity = groceryList.quantity,
                     )

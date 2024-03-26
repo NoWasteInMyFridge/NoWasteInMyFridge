@@ -94,7 +94,7 @@ fun OvalIconView(icon: ImageVector, text: String) {
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MenuScreen(name: String?, image: String?, ingredients: String?) {
+fun MenuScreen(name: String?, image: String?, ingredients: List<String>?) {
     Scaffold {
         Column(
             modifier = Modifier
@@ -146,9 +146,7 @@ fun MenuScreen(name: String?, image: String?, ingredients: String?) {
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        Column(
-//                            modifier = Modifier.fillMaxSize(),
-                        ) {
+                        Column {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
