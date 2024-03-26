@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
@@ -25,31 +26,28 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.develop.nowasteinmyfridge.data.model.GroceryListCreate
-import com.develop.nowasteinmyfridge.data.model.IngredientCreate
-import com.develop.nowasteinmyfridge.feature.grocerylist.GroceryListViewModel
-import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
-import com.develop.nowasteinmyfridge.ui.theme.YellowBtn
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.text.style.TextDecoration
-import java.util.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
+import com.develop.nowasteinmyfridge.ui.theme.BaseGray
+import com.develop.nowasteinmyfridge.ui.theme.BaseGreen
 import com.develop.nowasteinmyfridge.ui.theme.Black
+import com.develop.nowasteinmyfridge.ui.theme.GrayPrimary
+import com.develop.nowasteinmyfridge.ui.theme.White
+import com.develop.nowasteinmyfridge.ui.theme.YellowBtn
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -62,7 +60,7 @@ fun GroceryListScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = com.develop.nowasteinmyfridge.ui.theme.BaseGreen),
+                .background(color = BaseGreen),
             verticalArrangement = Arrangement.Bottom,
         ) {
             Box(
@@ -70,8 +68,8 @@ fun GroceryListScreen(
                     .fillMaxWidth()
                     .height(720.dp)
                     .background(
-                        color = androidx.compose.ui.graphics.Color.White,
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(
+                        color = Color.White,
+                        shape = RoundedCornerShape(
                             topStart = 50.dp,
                             topEnd = 50.dp
                         )
@@ -98,7 +96,7 @@ fun GroceryListScreen(
                         Text(
                             text = "Grocery List",
                             fontSize = 28.sp,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                            fontWeight = FontWeight.SemiBold,
                         )
                         TextButton(onClick = {
                             groceryListViewModel.clearGroceryList()
@@ -109,12 +107,12 @@ fun GroceryListScreen(
                         LazyColumn(
                             modifier = Modifier
                                 .height(400.dp)
-                        ){
-                                items(groceryListState.size) { index ->
-                                    val groceryItem = groceryListState[index]
-                                    GroceryList(groceryItem.name, groceryItem.quantity)
-                                }
+                        ) {
+                            items(groceryListState.size) { index ->
+                                val groceryItem = groceryListState[index]
+                                GroceryList(groceryItem.name, groceryItem.quantity)
                             }
+                        }
                     }
                     Row(
                         verticalAlignment = Alignment.Bottom,
@@ -125,7 +123,6 @@ fun GroceryListScreen(
                             .padding(end = 16.dp)
                     ) {
                         PlusButton(groceryListViewModel)
-//                        Spacer(modifier = Modifier.width(16.dp))
                     }
                 }
             }
@@ -151,7 +148,7 @@ fun GroceryList(name: String, quantity: Int) {
             modifier = Modifier
                 .width(18.dp)
                 .height(46.dp)
-                .background(color = if (strikedOut) Color.Red else com.develop.nowasteinmyfridge.ui.theme.BaseGreen)
+                .background(color = if (strikedOut) Color.Red else BaseGreen)
         )
         Box(
             modifier = Modifier
@@ -183,7 +180,7 @@ fun GroceryList(name: String, quantity: Int) {
                     Text(
                         text = quantity.toString(),
                         fontSize = 18.sp,
-                        color = com.develop.nowasteinmyfridge.ui.theme.BaseGray,
+                        color = BaseGray,
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                 }
@@ -191,7 +188,6 @@ fun GroceryList(name: String, quantity: Int) {
         }
     }
 }
-
 
 
 @Composable
@@ -223,7 +219,7 @@ fun PlusButton(groceryListViewModel: GroceryListViewModel) {
             ) {
                 Column(
                     modifier = Modifier
-                        .background(com.develop.nowasteinmyfridge.ui.theme.White)
+                        .background(White)
                         .padding(16.dp)
                 ) {
                     Text(

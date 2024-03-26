@@ -3,10 +3,10 @@ package com.develop.nowasteinmyfridge.domain
 import com.develop.nowasteinmyfridge.data.repository.FirebaseFirestoreRepository
 import javax.inject.Inject
 
-class ClearGroceryListUsecase @Inject constructor(
+class ClearGroceryListUseCase @Inject constructor(
     private val firestoreRepository: FirebaseFirestoreRepository
 ) {
-    suspend fun clearGroceryList() {
+    suspend operator fun invoke() {
         firestoreRepository.clearGroceryList()
     }
 }

@@ -1,11 +1,11 @@
 package com.develop.nowasteinmyfridge.di
 
-import RecipeRepositoryImpl
 import com.develop.nowasteinmyfridge.data.repository.AuthRepository
 import com.develop.nowasteinmyfridge.data.repository.AuthRepositoryImpl
 import com.develop.nowasteinmyfridge.data.repository.FirebaseFirestoreRepository
 import com.develop.nowasteinmyfridge.data.repository.FirebaseFirestoreRepositoryImpl
 import com.develop.nowasteinmyfridge.data.repository.RecipeRepository
+import com.develop.nowasteinmyfridge.data.repository.RecipeRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
