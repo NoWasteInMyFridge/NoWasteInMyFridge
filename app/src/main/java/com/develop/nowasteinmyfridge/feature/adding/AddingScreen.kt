@@ -53,9 +53,7 @@ import com.develop.nowasteinmyfridge.ui.theme.GreenPrimary
 import com.develop.nowasteinmyfridge.ui.theme.White
 import com.develop.nowasteinmyfridge.util.Result
 import java.text.SimpleDateFormat
-import androidx.compose.foundation.layout.Row
 import java.util.*
-import androidx.compose.foundation.layout.*
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -68,6 +66,8 @@ fun AddingScreen(
     var mfgDate by remember { mutableStateOf(Calendar.getInstance()) }
     var efdDate by remember { mutableStateOf(Calendar.getInstance()) }
     var selectImageUri by remember { mutableStateOf<Uri?>(null) }
+    var isChecked by remember { mutableStateOf(false) }
+
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -141,7 +141,10 @@ fun AddingScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 color = Black,
                             )
-                            SwitchDemo()
+                            SwitchDemo(
+                                initialCheckedState = isChecked,
+                                onCheckedChange = { isChecked = it }
+                            )
                         }
                         Text(
                             text = stringResource(id = R.string.inventory_info),
@@ -270,6 +273,7 @@ fun AddingScreen(
                                                     image = selectImageUri,
                                                     mfg = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(mfgDate.time),
                                                     efd = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(efdDate.time),
+                                                    inFreeze = isChecked,
                                                 )
                                             )
                                         },
@@ -562,13 +566,21 @@ fun ClickableTextWithPlaceholderWithNoValue(
 }
 
 @Composable
-fun SwitchDemo() {
-    val checkedState = remember { mutableStateOf(true) }
+fun SwitchDemo(
+    initialCheckedState: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    var checkedState by remember { mutableStateOf(initialCheckedState) }
+
     androidx.compose.material.Switch(
-        checked = checkedState.value,
-        onCheckedChange = { checkedState.value = it }
+        checked = checkedState,
+        onCheckedChange = {
+            checkedState = it
+            onCheckedChange(it)
+        }
     )
 }
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

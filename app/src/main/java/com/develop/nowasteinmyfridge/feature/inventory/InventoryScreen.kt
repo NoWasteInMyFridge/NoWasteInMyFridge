@@ -14,6 +14,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -28,13 +31,17 @@ fun InventoryScreen(
     inventoryViewModel: InventoryViewModel = hiltViewModel()
 ) {
     val ingredientsList by inventoryViewModel.ingredientsState
+    var selectedIngredientIndex by remember { mutableStateOf(-1) }
     Scaffold {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(
-                modifier = Modifier.fillMaxWidth().padding(16.dp).height(80.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .height(80.dp),
                 Alignment.BottomCenter
             ) {
                 Text(
@@ -53,7 +60,15 @@ fun InventoryScreen(
                     if (ingredientsList.isNotEmpty()) {
                         items(ingredientsList.size) { index ->
                             val ingredient = ingredientsList[index]
-                            ShowingBox(ingredient = ingredient)
+                            ShowingBox(
+                                ingredient = ingredient,
+                                onDeleteClicked = {
+                                    inventoryViewModel.deleteIngredient(ingredient.name)
+                                    // Handle deletion here
+//                                    onDeleteIngredient(index)
+                                }
+                            )
+                                selectedIngredientIndex = index
                         }
                     } else {
                         item {

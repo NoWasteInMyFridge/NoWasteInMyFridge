@@ -33,6 +33,29 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
     private val userEmail = firebaseAuth.currentUser?.email.orEmpty()
     private val storageRef = firebaseStorage.reference
 
+    override suspend fun deleteIngredient(ingredientName: String): Result<Unit> {
+        return try {
+            val querySnapshot = db.collection("users/$userEmail/ingredients")
+                .whereEqualTo("name", ingredientName)
+                .get()
+                .await()
+            if (!querySnapshot.isEmpty) {
+                // Since there could be multiple ingredients with the same name, delete all of them
+                for (document in querySnapshot.documents) {
+                    document.reference.delete().await()
+                }
+                Result.Success(Unit)
+            } else {
+                Result.Error(Exception("Ingredient not found"))
+            }
+        } catch (e: Exception) {
+            // Handle any errors
+            Log.e("FirestoreError", "Error deleting ingredient: $e")
+            Result.Error(e)
+        }
+    }
+
+
     override suspend fun clearGroceryList() {
         try {
             val querySnapshot = db.collection("users/$userEmail/groceryList").get().await()

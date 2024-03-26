@@ -30,9 +30,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,28 +39,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.develop.nowasteinmyfridge.R
-import com.develop.nowasteinmyfridge.feature.account.AccountViewModel
 import com.develop.nowasteinmyfridge.feature.inventory.InventoryViewModel
 import com.develop.nowasteinmyfridge.ui.theme.BaseColor
 import com.develop.nowasteinmyfridge.ui.theme.BaseGray
 import com.develop.nowasteinmyfridge.ui.theme.Black
-import com.develop.nowasteinmyfridge.util.Result
+import com.develop.nowasteinmyfridge.ui.theme.White
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -70,10 +67,8 @@ import java.util.Locale
 fun HomeScreen(
     inventoryViewModel: InventoryViewModel = hiltViewModel(),
     homeViewModel: HomeViewModel = hiltViewModel(),
-    accountViewModel: AccountViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-    val userInfoState by accountViewModel.userProfileInfoState.collectAsState()
     val ingredientsList by inventoryViewModel.ingredientsState
     val displayedIngredients = ingredientsList.map { ingredient ->
         ingredient.name to ingredient.image
@@ -87,19 +82,11 @@ fun HomeScreen(
         SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateString)
     }
     val ingredientsForSearch = sortedDisplayedIngredients
-        .take(1).joinToString(", ") { it.name }
+        .take(1)
+        .map { it.name }
+        .joinToString(", ")
 
-    val userProfile = when (val result = userInfoState) {
-        is Result.Success -> {
-            result.data
-        }
-
-        else -> {
-            null
-        }
-    }
-    val userName = userProfile?.firstName ?: stringResource(id = R.string.loading)
-
+    val recipesState by homeViewModel.recipesState
     if (ingredientsForSearch.isNotEmpty()) {
         LaunchedEffect(Unit) {
             try {
@@ -110,11 +97,21 @@ fun HomeScreen(
             }
         }
     } else {
-        Log.e("Empty ingredient", "Ingredients for search is empty")
+        Log.e("error from LaunchedEffect", "Ingredients for search is empty")
     }
 
-    val recipesState by homeViewModel.recipesState
-    val hits = recipesState.hits
+    val hits = recipesState?.hits
+    val recipeNames = hits?.map { it.recipe.label }
+    val recipeImages = hits?.map { it.recipe.image }
+    val ingredientLines = hits?.map { it.recipe.ingredientLines } ?: emptyList()
+    if (hits != null) {
+        Log.d("Recipes", "${hits}")
+        Log.d("recipeNames", "${recipeNames}")
+        Log.d("ingredientLines", "${ingredientLines}")
+    // Use debug level for informational logs
+    } else {
+        Log.w("Recipes", "No recipes found") // Use warning level for empty results
+    }
 
     Column {
         Box(
@@ -147,16 +144,23 @@ fun HomeScreen(
                                 .padding(start = 20.dp, top = 16.dp)
                         ) {
                             Text(
-                                text = stringResource(id = R.string.welcome_message) + ", " + userName,
-                                style = TextStyle(
-                                    fontSize = 28.sp,
-                                    shadow = Shadow(
-                                        color = Color.Black,
-                                        offset = Offset(2f, 2f),
-                                        blurRadius = 4f
-                                    )
-                                ),
-                                color = Color.White,
+                                text = buildAnnotatedString {
+                                    for (letter in "Hi, Ampere") {
+                                        withStyle(
+                                            style = SpanStyle(
+                                                shadow = Shadow(
+                                                    color = Black,
+                                                    offset = Offset(2f, 2f),
+                                                    blurRadius = 4f
+                                                )
+                                            )
+                                        ) {
+                                            append(letter.toString())
+                                        }
+                                    }
+                                },
+                                style = MaterialTheme.typography.headlineMedium,
+                                color = White
                             )
                         }
                         Column(
@@ -166,9 +170,9 @@ fun HomeScreen(
                                 .padding(start = 20.dp, bottom = 10.dp)
                         ) {
                             Text(
-                                text = stringResource(id = R.string.ingredient),
+                                text = "Ingredients",
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = Black,
+                                color = Black
                             )
                         }
                     }
@@ -186,40 +190,25 @@ fun HomeScreen(
                             SliderBoxComponent(names = names, images = images)
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = stringResource(id = R.string.label_suggest_menu),
+                                text = "Today Option",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Black
                             )
                             Spacer(modifier = Modifier.height(16.dp))
-                            if (hits.isEmpty()) {
-                                Text(
-                                    text = stringResource(id = R.string.no_suggest_menu),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = Black
-                                )
-                            } else {
-                                val recipeNames = hits.map { it.recipe.label }
-                                val recipeImages = hits.map { it.recipe.image }
-                                val ingredientLines = hits.flatMap { it.recipe.ingredientLines }
-                                SliderBoxComponentVertical(
-                                    names = recipeNames,
-                                    images = recipeImages,
-                                    onItemClick = { name, image ->
-                                        navController.navigate(
-                                            "menu/${Uri.encode(name)}/${
-                                                Uri.encode(
-                                                    image
-                                                )
-                                            }?ingredients=${
-                                                Uri.encode(
-                                                    ingredientLines.joinToString(
-                                                        ";"
-                                                    )
-                                                )
-                                            }"
+                            recipeNames?.let { names ->
+                                recipeImages?.let { images ->
+                                    ingredientLines?.let { lines ->
+                                        Log.d("sorryyy", "${lines.joinToString(",")}")
+                                        SliderBoxComponentVertical(
+                                            names = names ?: emptyList(),
+                                            images = images ?: emptyList(),
+                                            ingredientLines = lines ?: emptyList(),
+                                            onItemClick = { name, image, lines ->
+                                                navController.navigate("menu/${Uri.encode(name)}/${Uri.encode(image)}/${Uri.encode(lines.joinToString(","))}")
+                                            }
                                         )
                                     }
-                                )
+                                }
                             }
                         }
                     }
@@ -236,7 +225,7 @@ fun SliderBoxComponent(
     images: List<String>,
     modifier: Modifier = Modifier
 ) {
-    var selectedIndex by remember { mutableIntStateOf(0) }
+    var selectedIndex by remember { mutableStateOf(0) }
     LazyRow(
         modifier = modifier
             .fillMaxWidth()
@@ -279,10 +268,13 @@ fun SliderBoxComponent(
                 Canvas(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(2.dp)
+                        .height(2.dp) // Adjust the height of the shadow
                         .align(Alignment.BottomCenter)
                 ) {
-                    drawIntoCanvas {
+                    drawIntoCanvas { canvas ->
+                        val shadowColor = BaseGray
+                        val shadowAlpha = 0.25f
+                        val shadowHeight = size.height
                         drawRect(
                             color = BaseGray.copy(alpha = 0.25f),
                             topLeft = Offset(0f, 0f),
@@ -299,10 +291,11 @@ fun SliderBoxComponent(
 fun SliderBoxComponentVertical(
     names: List<String>,
     images: List<String>,
+    ingredientLines: List<List<String>>,
     modifier: Modifier = Modifier,
-    onItemClick: (String, String) -> Unit
+    onItemClick: (String, String, List<String>) -> Unit
 ) {
-    var selectedIndex by remember { mutableIntStateOf(0) }
+    var selectedIndex by remember { mutableStateOf(0) }
 
     LazyColumn(
         modifier = modifier.fillMaxWidth()
@@ -310,12 +303,12 @@ fun SliderBoxComponentVertical(
         itemsIndexed(names) { index, name ->
             Box(
                 modifier = Modifier
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 4.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.background)
                     .clickable {
                         selectedIndex = index
-                        onItemClick(name, images.getOrNull(index) ?: "")
+                        onItemClick(name, images.getOrNull(index) ?: "", ingredientLines[index])
                     }
                     .height(100.dp)
             ) {
@@ -351,7 +344,6 @@ fun SliderBoxComponentVertical(
                             contentScale = ContentScale.FillBounds,
                         )
                     }
-
                 }
                 Canvas(
                     modifier = Modifier

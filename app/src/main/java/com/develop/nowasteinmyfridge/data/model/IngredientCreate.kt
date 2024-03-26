@@ -8,4 +8,5 @@ data class IngredientCreate(
     val image: Uri? = null,
     val mfg: String = "",
     val efd: String = "",
+    val inFreeze: Boolean = false,
 )
