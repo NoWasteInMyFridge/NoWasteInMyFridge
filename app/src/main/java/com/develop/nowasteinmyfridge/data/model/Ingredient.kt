@@ -1,7 +1,5 @@
 package com.develop.nowasteinmyfridge.data.model
 
-import android.net.Uri
-
 data class Ingredient(
     val id: String = "",
     val name: String = "",
@@ -9,5 +7,5 @@ data class Ingredient(
     val image:String ="",
     val mfg:String ="",
     val efd:String ="",
-    val inFreeze: Boolean = false,
+    val isInFreezer: Boolean = false,
 )

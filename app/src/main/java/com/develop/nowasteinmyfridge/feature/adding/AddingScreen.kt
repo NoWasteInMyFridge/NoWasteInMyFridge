@@ -35,6 +35,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -164,9 +165,11 @@ fun AddingScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 color = Black,
                             )
-                            SwitchDemo(
-                                initialCheckedState = isChecked,
-                                onCheckedChange = { isChecked = it }
+                            Switch(
+                                checked = isChecked,
+                                onCheckedChange = {
+                                    isChecked = it
+                                }
                             )
                         }
                         Text(
@@ -611,23 +614,6 @@ fun ClickableTextWithPlaceholderWithNoValue(
         }
     }
 }
-
-@Composable
-fun SwitchDemo(
-    initialCheckedState: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    var checkedState by remember { mutableStateOf(initialCheckedState) }
-
-    androidx.compose.material.Switch(
-        checked = checkedState,
-        onCheckedChange = {
-            checkedState = it
-            onCheckedChange(it)
-        }
-    )
-}
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

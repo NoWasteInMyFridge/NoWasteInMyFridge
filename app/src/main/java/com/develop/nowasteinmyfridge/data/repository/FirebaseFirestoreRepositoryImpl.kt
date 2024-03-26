@@ -120,6 +120,7 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
                         image = imageUrl,
                         mfg = ingredient.mfg,
                         efd = ingredient.efd,
+                        isInFreezer = ingredient.inFreeze,
                     )
                     db.collection("users/$userEmail/ingredients").document(ingredientId)
                         .set(newIngredient)
@@ -134,6 +135,7 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
                     quantity = ingredient.quantity,
                     mfg = ingredient.mfg,
                     efd = ingredient.efd,
+                    isInFreezer = ingredient.inFreeze,
                 )
                 db.collection("users/$userEmail/ingredients").document(ingredientId)
                     .set(newIngredient)
