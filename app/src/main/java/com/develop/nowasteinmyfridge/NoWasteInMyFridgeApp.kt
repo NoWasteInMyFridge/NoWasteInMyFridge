@@ -15,6 +15,10 @@ class NoWasteInMyFridgeApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        scheduleDailyCheck()
+    }
+
+    private fun scheduleDailyCheck() {
         expirationCheckScheduler.scheduleDailyCheck()
     }
 
