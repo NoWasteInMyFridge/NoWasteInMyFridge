@@ -4,7 +4,7 @@ import com.develop.nowasteinmyfridge.data.model.RecipeSearchResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
-
+const val BASE_URL = "https://api.edamam.com/api/"
 interface EdamamApi {
     @GET("recipes/v2?type=public")
     suspend fun searchRecipes(
