@@ -133,4 +133,4 @@ app/release/output.json
 .idea
 
 # env file
-.env
+env
