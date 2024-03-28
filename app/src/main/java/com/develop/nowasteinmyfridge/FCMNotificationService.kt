@@ -23,7 +23,6 @@ class FCMNotificationService : FirebaseMessagingService(){
             // Handle notification message.
             val title = it.title ?: ""
             val body = it.body ?: ""
-
             // Display the notification.
             showNotification(title, body)
         }
