@@ -3,6 +3,7 @@ package com.develop.nowasteinmyfridge.feature.adding
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -38,6 +39,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,6 +78,7 @@ import com.develop.nowasteinmyfridge.ui.theme.GreenButton
 import com.develop.nowasteinmyfridge.ui.theme.GreenPrimary
 import com.develop.nowasteinmyfridge.ui.theme.White
 import com.develop.nowasteinmyfridge.util.Result
+import com.journeyapps.barcodescanner.ScanContract
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -91,6 +95,16 @@ fun AddingScreen(
     var efdDate by remember { mutableStateOf(Calendar.getInstance()) }
     var selectImageUri by remember { mutableStateOf<Uri?>(null) }
     var isChecked by remember { mutableStateOf(false) }
+    val brands by addingViewModel.brands.collectAsState()
+    Log.d("recieve", "$brands")
+    var scanName by remember {
+        mutableStateOf(
+            brands?.let { TextFieldValue(it) } ?: TextFieldValue()
+        )
+    }
+    LaunchedEffect(brands) {
+        scanName = brands?.let { TextFieldValue(it) } ?: TextFieldValue()
+    }
 
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -98,6 +112,15 @@ fun AddingScreen(
         onResult = { uri: Uri? -> selectImageUri = uri }
     )
 
+    if (brands != null) {
+        Text(text = "Brands: $brands")
+    }
+
+    var isSuccessGetBarCode by remember { mutableStateOf(false) }
+//    val handleBarcodeScanned = {
+//        isSuccessGetBarCode = true // Set the flag to true
+//        Log.d("BarcodeScanned", "Barcode scanned successfully")
+//    }
     val addIngredientResult by addingViewModel.addIngredientResult.collectAsStateWithLifecycle()
     val context = LocalContext.current
     Box(
@@ -189,10 +212,32 @@ fun AddingScreen(
                         )
                         InputFieldWithPlaceholder(
                             placeholder = stringResource(id = R.string.name_placeholder),
-                            textValue = name,
+                            textValue = scanName ,
                         ) {
-                            name = it
+                            scanName = it
                         }
+                        Log.d("sacannn", "$scanName")
+
+
+//                        if (issucess){
+//                            Log.d("isaddsucess", "yeesss")
+////                            InputFieldWithPlaceholder(
+////                                placeholder = stringResource(id = R.string.name_placeholder),
+////                                textValue = { name = it },
+////                                onValueChange = { name = it }
+////                            )
+//                        } else {
+//                            Log.d("isaddsucess", "noooo")
+//
+//                        }
+
+
+//                        InputFieldWithPlaceholder(
+//                            placeholder = stringResource(id = R.string.name_placeholder),
+//                            textValue = name,
+//                        ) {
+//                            name = it
+//                        }
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = stringResource(id = R.string.quantity),
@@ -282,6 +327,7 @@ fun AddingScreen(
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
+                                    ScanBarcodeButton(addingViewModel)
                                 }
                                 Column(
                                     modifier = Modifier
@@ -612,6 +658,35 @@ fun ClickableTextWithPlaceholderWithNoValue(
                     }
             )
         }
+    }
+}
+
+@Composable
+fun ScanBarcodeButton(addingViewModel: AddingViewModel) {
+//    var isSuccessGetBarCode by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(contract = ScanContract()) { result ->
+        if (result.contents == null) {
+            Toast.makeText(context, "Cancelled", Toast.LENGTH_LONG).show()
+        } else {
+//            isSuccessGetBarCode = true
+            Toast.makeText(context, "Scanned: ${result.contents}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    Button(
+        onClick = {
+//            launcher.launch(ScanOptions())
+            addingViewModel.getIngredientByBarcode("8851019010847")
+        },
+        modifier = Modifier.padding(16.dp),
+//        enabled = !isSuccessGetBarCode
+    ) {
+        Text(
+            text = "Scan QR",
+            color = Color.White,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
