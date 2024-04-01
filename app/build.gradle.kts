@@ -104,4 +104,7 @@ dependencies {
 
     // read env file
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
+
+    implementation ("com.squareup.okhttp3:okhttp:4.9.2")
+
 }

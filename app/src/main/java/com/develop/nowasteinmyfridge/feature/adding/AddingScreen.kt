@@ -67,6 +67,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.develop.nowasteinmyfridge.BottomBarScreen
 import com.develop.nowasteinmyfridge.R
@@ -96,16 +97,26 @@ fun AddingScreen(
     var selectImageUri by remember { mutableStateOf<Uri?>(null) }
     var isChecked by remember { mutableStateOf(false) }
     val brands by addingViewModel.brands.collectAsState()
-    Log.d("recieve", "$brands")
+    val image by addingViewModel.imageUrl.collectAsState()
+    var brandsName by remember { mutableStateOf("") }
+
+    var imageUrl by remember {
+        mutableStateOf<String>("")
+    }
+
     var scanName by remember {
         mutableStateOf(
             brands?.let { TextFieldValue(it) } ?: TextFieldValue()
         )
     }
+    val useNameInsteadOfScanName = scanName.text.isNullOrEmpty()
     LaunchedEffect(brands) {
+        brandsName = brands ?: ""
         scanName = brands?.let { TextFieldValue(it) } ?: TextFieldValue()
+        imageUrl = image
+//        selectImageUri = imageUrl
+        Log.d("wtf", "$selectImageUri, $brandsName")
     }
-
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -116,11 +127,6 @@ fun AddingScreen(
         Text(text = "Brands: $brands")
     }
 
-    var isSuccessGetBarCode by remember { mutableStateOf(false) }
-//    val handleBarcodeScanned = {
-//        isSuccessGetBarCode = true // Set the flag to true
-//        Log.d("BarcodeScanned", "Barcode scanned successfully")
-//    }
     val addIngredientResult by addingViewModel.addIngredientResult.collectAsStateWithLifecycle()
     val context = LocalContext.current
     Box(
@@ -154,6 +160,31 @@ fun AddingScreen(
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.FillBounds
                         )
+                    }
+                    if (selectImageUri != null) {
+                        Image(
+                            painter = rememberAsyncImagePainter(model = selectImageUri),
+                            contentDescription = "",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                        )
+                    } else {
+                        if (imageUrl != null ) {
+                            AsyncImage(
+                                model = imageUrl,
+                                contentDescription = "Image for $imageUrl",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Fit
+                            )
+                        }
+                        else {
+                            Image(
+                                painter = painterResource(id = R.mipmap.add_photo),
+                                contentDescription = "",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.FillBounds
+                            )
+                        }
                     }
                     Column(
                         modifier = Modifier
@@ -212,32 +243,14 @@ fun AddingScreen(
                         )
                         InputFieldWithPlaceholder(
                             placeholder = stringResource(id = R.string.name_placeholder),
-                            textValue = scanName ,
+                            textValue = if (useNameInsteadOfScanName) name else scanName,
                         ) {
-                            scanName = it
+                            if (useNameInsteadOfScanName) {
+                                name = it
+                            } else {
+                                scanName = it
+                            }
                         }
-                        Log.d("sacannn", "$scanName")
-
-
-//                        if (issucess){
-//                            Log.d("isaddsucess", "yeesss")
-////                            InputFieldWithPlaceholder(
-////                                placeholder = stringResource(id = R.string.name_placeholder),
-////                                textValue = { name = it },
-////                                onValueChange = { name = it }
-////                            )
-//                        } else {
-//                            Log.d("isaddsucess", "noooo")
-//
-//                        }
-
-
-//                        InputFieldWithPlaceholder(
-//                            placeholder = stringResource(id = R.string.name_placeholder),
-//                            textValue = name,
-//                        ) {
-//                            name = it
-//                        }
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = stringResource(id = R.string.quantity),
@@ -338,11 +351,16 @@ fun AddingScreen(
                                 ) {
                                     Button(
                                         onClick = {
+                                            Log.d("help me", "$brandsName , $name.text, ${imageUrl.javaClass}, $imageUrl, $selectImageUri)")
                                             addingViewModel.addIngredient(
                                                 IngredientCreate(
-                                                    name = name.text,
+                                                    name = if (brandsName.isNotEmpty()) brandsName else name.text,
                                                     quantity = quantity.text.toIntOrNull() ?: 0,
-                                                    image = selectImageUri,
+                                                    image = if (imageUrl != null && imageUrl.isNotEmpty()) {
+                                                        imageUrl
+                                                    } else {
+                                                        selectImageUri ?: ""
+                                                    },
                                                     mfg = SimpleDateFormat(
                                                         "yyyy-MM-dd",
                                                         Locale.getDefault()
@@ -663,24 +681,22 @@ fun ClickableTextWithPlaceholderWithNoValue(
 
 @Composable
 fun ScanBarcodeButton(addingViewModel: AddingViewModel) {
-//    var isSuccessGetBarCode by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(contract = ScanContract()) { result ->
         if (result.contents == null) {
             Toast.makeText(context, "Cancelled", Toast.LENGTH_LONG).show()
         } else {
-//            isSuccessGetBarCode = true
+//            addingViewModel.getIngredientByBarcode(result.contents)
             Toast.makeText(context, "Scanned: ${result.contents}", Toast.LENGTH_LONG).show()
         }
     }
 
     Button(
         onClick = {
+            addingViewModel.getIngredientByBarcode("8850188250306")
 //            launcher.launch(ScanOptions())
-            addingViewModel.getIngredientByBarcode("8851019010847")
         },
         modifier = Modifier.padding(16.dp),
-//        enabled = !isSuccessGetBarCode
     ) {
         Text(
             text = "Scan QR",

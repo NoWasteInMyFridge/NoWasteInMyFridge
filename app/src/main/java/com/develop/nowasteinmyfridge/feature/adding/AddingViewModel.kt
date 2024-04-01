@@ -22,20 +22,20 @@ class AddingViewModel @Inject constructor(
 ) : ViewModel() {
     private val _addIngredientResult = MutableStateFlow<Result<Unit>?>(null)
     val addIngredientResult: StateFlow<Result<Unit>?> get() = _addIngredientResult
-//    private val _ingredient = MutableStateFlow<Result<IngredientCreate>?>(null)
-//    val ingredient: StateFlow<Result<IngredientCreate>?> get() = _ingredient
     private val _brands = MutableStateFlow<String?>(null)
     val brands: StateFlow<String?> get() = _brands
+    private val _imageUrl = MutableStateFlow<String>("")
+    val imageUrl: StateFlow<String> get() = _imageUrl
 
     fun getIngredientByBarcode(barcode: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val result = getIngredientByBarcodeUseCase(barcode)
                 Log.d("AddingViewModel", "Result: $result")
-
-                // Parse the response to extract the brands field
                 val brands = parseBrandsFromResponse(result)
                 _brands.value = brands
+                val imageUrl = result.product.image_url
+                _imageUrl.value = imageUrl
                 Log.d("AddingViewModel", "Brands: $brands")
             } catch (e: Exception) {
                 Log.e("AddingViewModel", "Error getting ingredient by barcode", e)
