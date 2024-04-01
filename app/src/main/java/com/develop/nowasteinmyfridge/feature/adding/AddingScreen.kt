@@ -115,7 +115,6 @@ fun AddingScreen(
         brandsName = brands ?: ""
         scanName = brands?.let { TextFieldValue(it) } ?: TextFieldValue()
         imageUrl = image
-//        selectImageUri = imageUrl
         Log.d("wtf", "$selectImageUri, $brandsName")
     }
 
@@ -147,46 +146,33 @@ fun AddingScreen(
                         .fillMaxWidth()
                         .fillMaxHeight(fraction = 0.35f)
                 ) {
-                    if (selectImageUri != null) {
-                        Image(
-                            painter = rememberAsyncImagePainter(model = selectImageUri),
-                            contentDescription = "",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop,
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(id = R.mipmap.add_photo),
-                            contentDescription = "",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.FillBounds
-                        )
-                    }
-                    if (selectImageUri != null) {
-                        Image(
-                            painter = rememberAsyncImagePainter(model = selectImageUri),
-                            contentDescription = "",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop,
-                        )
-                    } else {
-                        if (imageUrl != null ) {
-                            AsyncImage(
-                                model = imageUrl,
-                                contentDescription = "Image for $imageUrl",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Fit
-                            )
-                        }
-                        else {
+
+                        if (selectImageUri != null) {
                             Image(
-                                painter = painterResource(id = R.mipmap.add_photo),
+                                painter = rememberAsyncImagePainter(model = selectImageUri),
                                 contentDescription = "",
                                 modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.FillBounds
+                                contentScale = ContentScale.Crop,
                             )
-                        }
+                        } else {
+                            if (imageUrl != null ) {
+                                AsyncImage(
+                                    model = imageUrl,
+                                    contentDescription = "Image for $imageUrl",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop,
+                                )
+                            }
+                            else {
+                                Image(
+                                    painter = painterResource(id = R.mipmap.add_photo),
+                                    contentDescription = "",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.FillBounds
+                                )
+                            }
                     }
+
                     Column(
                         modifier = Modifier
                             .wrapContentSize()
