@@ -36,7 +36,7 @@ class IngredientByBarcodeRepositoryImpl @Inject constructor() : IngredietByBarCo
         } catch (e: IOException) {
             Log.e("IngredientByBarcodeRepo", "Network error: ${e.message}", e)
         }
-        Log.d("api call", "nooooooooo")
+        Log.d("api call", "no response")
         return Product()
     }
 

@@ -106,8 +106,6 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
     override suspend fun addIngredient(ingredient: IngredientCreate) {
         try {
             val ingredientId = db.collection("users/$userEmail/ingredients").document().id
-
-            // Smart cast the image property to Uri if it's not null
             val imageUri = ingredient.image as? Uri
 
             if (imageUri != null) {
@@ -146,73 +144,11 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
                     .set(newIngredient)
                     .await()
             } else {
-                // Handle the case where the image is null or not of type Uri or String
-                // For example, you might want to set a default image URL or handle the error
             }
         } catch (e: FirebaseFirestoreException) {
             Log.d("FirestoreError", "Error adding ingredient to Firestore: $e")
         }
     }
-
-
-//    override suspend fun addIngredient(ingredient: IngredientCreate) {
-//        try {
-//            val ingredientId = db.collection("users/$userEmail/ingredients").document().id
-//            val image = ingredient.image as? Uri
-//
-//            if (image != null) {
-//                val ref = storageRef.child("users/$userEmail/ingredients/${image}")
-//                val uploadTask = ref.putFile(image)
-//                try {
-//                    val taskSnapshot = uploadTask.await()
-//                    val imageUrl =
-//                        taskSnapshot.metadata!!.reference!!.downloadUrl.await().toString()
-//                    val newIngredient = Ingredient(
-//                        id = ingredientId,
-//                        name = ingredient.name,
-//                        quantity = ingredient.quantity,
-//                        image = imageUrl,
-//                        mfg = ingredient.mfg,
-//                        efd = ingredient.efd,
-//                        isInFreezer = ingredient.inFreeze,
-//                    )
-//                    db.collection("users/$userEmail/ingredients").document(ingredientId)
-//                        .set(newIngredient)
-//                        .await()
-//                } catch (uploadException: Exception) {
-//                    Log.e("Error", "Error uploading image: $uploadException")
-//                }
-//            } else {
-//                val newIngredient = Ingredient(
-//                    id = ingredientId,
-//                    name = ingredient.name,
-//                    quantity = ingredient.quantity,
-//                    mfg = ingredient.mfg,
-//                    efd = ingredient.efd,
-//                    isInFreezer = ingredient.inFreeze,
-//                )
-//                db.collection("users/$userEmail/ingredients").document(ingredientId)
-//                    .set(newIngredient)
-//                    .await()
-//            }
-//
-////            val newIngredient = Ingredient(
-////                id = ingredientId,
-////                name = ingredient.name,
-////                quantity = ingredient.quantity,
-////                image = image ?: "",
-////                mfg = ingredient.mfg,
-////                efd = ingredient.efd,
-////                isInFreezer = ingredient.inFreeze
-////            )
-////            db.collection("users/$userEmail/ingredients").document(ingredientId)
-////                .set(newIngredient)
-////                .await()
-//        } catch (e: FirebaseFirestoreException) {
-//            Log.d("FirestoreError", "Error adding ingredient to Firestore: $e")
-//        }
-//    }
-
 
     override suspend fun getUserInfo(): Flow<Result<UserProfile>> {
         return flow {

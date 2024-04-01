@@ -80,6 +80,7 @@ import com.develop.nowasteinmyfridge.ui.theme.GreenPrimary
 import com.develop.nowasteinmyfridge.ui.theme.White
 import com.develop.nowasteinmyfridge.util.Result
 import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -686,15 +687,14 @@ fun ScanBarcodeButton(addingViewModel: AddingViewModel) {
         if (result.contents == null) {
             Toast.makeText(context, "Cancelled", Toast.LENGTH_LONG).show()
         } else {
-//            addingViewModel.getIngredientByBarcode(result.contents)
+            addingViewModel.getIngredientByBarcode(result.contents)
             Toast.makeText(context, "Scanned: ${result.contents}", Toast.LENGTH_LONG).show()
         }
     }
 
     Button(
         onClick = {
-            addingViewModel.getIngredientByBarcode("8850188250306")
-//            launcher.launch(ScanOptions())
+            launcher.launch(ScanOptions())
         },
         modifier = Modifier.padding(16.dp),
     ) {
