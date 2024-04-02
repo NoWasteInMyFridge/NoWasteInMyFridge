@@ -31,10 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.ui.theme.White
 
 @Composable
@@ -168,7 +170,7 @@ fun MenuScreen(name: String?, image: String?, ingredientList: List<String>) {
                             modifier = Modifier.fillMaxSize(),
                         ) {
                             Text(
-                                text = "ingredients",
+                                text = stringResource(id = R.string.ingredient),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold,
                             )

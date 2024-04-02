@@ -115,7 +115,7 @@ fun HomeScreen(
 
     val recipesState by homeViewModel.recipesState
     val hits = recipesState.hits
-    Log.d("all", "$hits")
+
 
     Column {
         Box(
@@ -201,17 +201,29 @@ fun HomeScreen(
                             } else {
                                 val recipeNames = hits.map { it.recipe.label }
                                 val recipeImages = hits.map { it.recipe.image }
-                                val ingredientLinesSent = hits.mapNotNull { recipeHit ->
-                                    recipeHit.recipe.ingredientLines?.let {
+                                val ingredientLinesSent = hits.map { recipeHit ->
+                                    recipeHit.recipe.ingredientLines.let {
                                         listOfNotNull(it)
                                     }
                                 }.flatten()
                                 SliderBoxComponentVertical(
                                     names = recipeNames,
                                     images = recipeImages,
-                                    ingredientLines = ingredientLinesSent ,
+                                    ingredientLines = ingredientLinesSent,
                                     onItemClick = { name, image, ingredientLines ->
-                                        navController.navigate("menu/${Uri.encode(name)}/${Uri.encode(image)}?ingredients=${Uri.encode(ingredientLines.joinToString(";"))}")
+                                        navController.navigate(
+                                            "menu/${Uri.encode(name)}/${
+                                                Uri.encode(
+                                                    image
+                                                )
+                                            }?ingredients=${
+                                                Uri.encode(
+                                                    ingredientLines.joinToString(
+                                                        ";"
+                                                    )
+                                                )
+                                            }"
+                                        )
                                     }
                                 )
                             }
