@@ -38,8 +38,8 @@ import coil.compose.AsyncImage
 import com.develop.nowasteinmyfridge.ui.theme.White
 
 @Composable
-fun DisplayIngredients(ingredients: String) {
-    val formattedIngredients = ingredients.split(",")
+fun DisplayIngredients(ingredients: List<String>) {
+    val formattedIngredients = ingredients
         .joinToString(separator = "\n • ", prefix = " • ") {
             it.trim()
         }
@@ -94,7 +94,7 @@ fun OvalIconView(icon: ImageVector, text: String) {
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MenuScreen(name: String?, image: String?, ingredients: List<String>?) {
+fun MenuScreen(name: String?, image: String?, ingredientList: List<String>) {
     Scaffold {
         Column(
             modifier = Modifier
@@ -176,7 +176,7 @@ fun MenuScreen(name: String?, image: String?, ingredients: List<String>?) {
                                 modifier = Modifier.height(200.dp)
                             ) {
                                 item {
-                                    DisplayIngredients(ingredients.toString())
+                                    DisplayIngredients(ingredientList)
                                 }
                             }
                         }

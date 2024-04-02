@@ -115,6 +115,7 @@ fun HomeScreen(
 
     val recipesState by homeViewModel.recipesState
     val hits = recipesState.hits
+    Log.d("all", "$hits")
 
     Column {
         Box(
@@ -201,25 +202,35 @@ fun HomeScreen(
                                 val recipeNames = hits.map { it.recipe.label }
                                 val recipeImages = hits.map { it.recipe.image }
                                 val ingredientLines = hits.flatMap { it.recipe.ingredientLines }
+                                val ingredientLinessss = hits.mapNotNull { recipeHit ->
+                                    // Only include recipes that have ingredient lines
+                                    recipeHit.recipe.ingredientLines?.let {
+                                        // Combine ingredient lines within a nested list for each recipe
+                                        listOfNotNull(it)
+                                    }
+                                }.flatten()
+
+                                Log.d("pewdeoie", "$ingredientLinessss")
                                 SliderBoxComponentVertical(
                                     names = recipeNames,
                                     images = recipeImages,
-                                    ingredientLines = ingredientLines,
-                                    onItemClick = { name, image, _ ->
-                                        navController.navigate(
-                                            "menu/${Uri.encode(name)}/${
-                                                Uri.encode(
-                                                    image
-                                                )
-                                            }?ingredients=${
-                                                Uri.encode(
-                                                    ingredientLines.joinToString(
-                                                        ";"
-                                                    )
-                                                )
-                                            }"
-                                        )
+                                    ingredientLines = ingredientLinessss,
+                                    onItemClick = { name, image, ingredientLines ->
+                                        navController.navigate("menu/${Uri.encode(name)}/${Uri.encode(image)}?ingredients=${Uri.encode(ingredientLines.joinToString(";"))}")
                                     }
+//                                    onItemClick = { name, image, _ ->
+//                                        navController.navigate(
+//                                            "menu/${Uri.encode(name)}/${
+//                                                Uri.encode(
+//                                                    image
+//                                                )
+//                                            }?ingredients=${
+//                                                Uri.encode(
+//                                                    ingredientLines.toString()
+//                                                    )
+//                                            }"
+//                                        )
+//                                    }
                                 )
                             }
                         }
@@ -300,9 +311,9 @@ fun SliderBoxComponent(
 fun SliderBoxComponentVertical(
     names: List<String>,
     images: List<String>,
-    ingredientLines:  List<String>,
+    ingredientLines: List<List<String>>,
     modifier: Modifier = Modifier,
-    onItemClick: (String, String, String) -> Unit
+    onItemClick: (String, String, List<String>) -> Unit
 ) {
     var selectedIndex by remember { mutableIntStateOf(0) }
 
@@ -373,6 +384,166 @@ fun SliderBoxComponentVertical(
         }
     }
 }
+
+
+//@Composable
+//fun SliderBoxComponentVertical(
+//    names: List<String>,
+//    images: List<String>,
+//    ingredientLines: List<List<String>>, // Change type to List<List<String>>
+//    modifier: Modifier = Modifier,
+//    onItemClick: (String, String, List<String>) -> Unit // Modify the function signature
+//) {
+//    var selectedIndex by remember { mutableIntStateOf(0) }
+//
+//    LazyColumn(
+//        modifier = modifier.fillMaxWidth()
+//    ) {
+//        itemsIndexed(names) { index, name ->
+//            Box(
+//                modifier = Modifier
+//                    .padding(vertical = 4.dp)
+//                    .clip(RoundedCornerShape(16.dp))
+//                    .background(MaterialTheme.colorScheme.background)
+//                    .clickable {
+//                        selectedIndex = index
+//                        onItemClick(name, images.getOrNull(index) ?: "", ingredientLines[index]) // Pass ingredient lines
+//                        Log.d("press", "${ingredientLines[index]}")
+//                    }
+//                    .height(100.dp)
+//            ) {
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(start = 20.dp),
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxHeight()
+//                            .width(250.dp)
+//                            .padding(end = 16.dp),
+//                        contentAlignment = Alignment.CenterStart
+//                    ) {
+//                        Text(
+//                            text = name,
+//                            style = MaterialTheme.typography.bodyLarge,
+//                            color = MaterialTheme.colorScheme.onBackground,
+//                            maxLines = 1,
+//                            overflow = TextOverflow.Ellipsis
+//                        )
+//                    }
+//                    Spacer(modifier = Modifier.weight(1f))
+//                    Box(
+//                        modifier = Modifier.fillMaxHeight(),
+//                    ) {
+//                        AsyncImage(
+//                            model = images.getOrNull(index),
+//                            contentDescription = "Image for $name",
+//                            modifier = Modifier.fillMaxSize(),
+//                            contentScale = ContentScale.FillBounds,
+//                        )
+//                    }
+//
+//                }
+//                Canvas(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(2.dp)
+//                        .align(Alignment.BottomCenter)
+//                ) {
+//                    drawIntoCanvas {
+//                        drawRect(
+//                            color = BaseGray.copy(alpha = 0.25f),
+//                            topLeft = Offset(0f, 0f),
+//                            size = Size(size.width, size.height),
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+
+
+//@Composable
+//fun SliderBoxComponentVertical(
+//    names: List<String>,
+//    images: List<String>,
+//    ingredientLines:  List<String>,
+//    modifier: Modifier = Modifier,
+//    onItemClick: (String, String, String) -> Unit
+//) {
+//    var selectedIndex by remember { mutableIntStateOf(0) }
+//
+//    LazyColumn(
+//        modifier = modifier.fillMaxWidth()
+//    ) {
+//        itemsIndexed(names) { index, name ->
+//            Box(
+//                modifier = Modifier
+//                    .padding(vertical = 4.dp)
+//                    .clip(RoundedCornerShape(16.dp))
+//                    .background(MaterialTheme.colorScheme.background)
+//                    .clickable {
+//                        selectedIndex = index
+//                        onItemClick(name, images.getOrNull(index) ?: "", ingredientLines[index])
+//                        Log.d("press", "${ingredientLines}")
+//                    }
+//                    .height(100.dp)
+//            ) {
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(start = 20.dp),
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxHeight()
+//                            .width(250.dp)
+//                            .padding(end = 16.dp),
+//                        contentAlignment = Alignment.CenterStart
+//                    ) {
+//                        Text(
+//                            text = name,
+//                            style = MaterialTheme.typography.bodyLarge,
+//                            color = MaterialTheme.colorScheme.onBackground,
+//                            maxLines = 1,
+//                            overflow = TextOverflow.Ellipsis
+//                        )
+//                    }
+//                    Spacer(modifier = Modifier.weight(1f))
+//                    Box(
+//                        modifier = Modifier.fillMaxHeight(),
+//                    ) {
+//                        AsyncImage(
+//                            model = images.getOrNull(index),
+//                            contentDescription = "Image for $name",
+//                            modifier = Modifier.fillMaxSize(),
+//                            contentScale = ContentScale.FillBounds,
+//                        )
+//                    }
+//
+//                }
+//                Canvas(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(2.dp)
+//                        .align(Alignment.BottomCenter)
+//                ) {
+//                    drawIntoCanvas {
+//                        drawRect(
+//                            color = BaseGray.copy(alpha = 0.25f),
+//                            topLeft = Offset(0f, 0f),
+//                            size = Size(size.width, size.height),
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 @Preview
 @Composable
