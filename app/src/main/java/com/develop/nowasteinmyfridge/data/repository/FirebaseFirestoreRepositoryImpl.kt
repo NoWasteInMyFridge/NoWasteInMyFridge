@@ -135,7 +135,7 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
                     id = ingredientId,
                     name = ingredient.name,
                     quantity = ingredient.quantity,
-                    image = ingredient.image as String,
+                    image = ingredient.image,
                     mfg = ingredient.mfg,
                     efd = ingredient.efd,
                     isInFreezer = ingredient.inFreeze,
@@ -143,7 +143,6 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
                 db.collection("users/$userEmail/ingredients").document(ingredientId)
                     .set(newIngredient)
                     .await()
-            } else {
             }
         } catch (e: FirebaseFirestoreException) {
             Log.d("FirestoreError", "Error adding ingredient to Firestore: $e")

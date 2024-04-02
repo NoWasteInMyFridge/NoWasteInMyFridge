@@ -99,15 +99,17 @@ fun AddingScreen(
     var isChecked by remember { mutableStateOf(false) }
     val brands by addingViewModel.brands.collectAsState()
     val image by addingViewModel.imageUrl.collectAsState()
+    val isFoundProduct by addingViewModel.isFoundProduct.collectAsState()
+    val getIngredientByBarcodeResult by addingViewModel.getIngredientByBarcodeResult.collectAsStateWithLifecycle()
     var brandsName by remember { mutableStateOf("") }
 
     var imageUrl by remember { mutableStateOf("") }
-
     var scanName by remember {
         mutableStateOf(
             brands?.let { TextFieldValue(it) } ?: TextFieldValue()
         )
     }
+
     val useNameInsteadOfScanName = scanName.text.isEmpty()
     LaunchedEffect(brands) {
         brandsName = brands ?: ""
@@ -294,7 +296,7 @@ fun AddingScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            if (addIngredientResult is Result.Loading) {
+                            if (addIngredientResult is Result.Loading || getIngredientByBarcodeResult is Result.Loading) {
                                 Box(
                                     contentAlignment = Alignment.Center,
                                     modifier = Modifier.fillMaxSize()
@@ -331,7 +333,7 @@ fun AddingScreen(
                                 ) {
                                     Button(
                                         onClick = {
-                                            Log.d("help me", "$brandsName , $name.text, ${imageUrl.javaClass}, $imageUrl, $selectImageUri)")
+                                            Log.d("addingViewModel", "$brandsName , $name.text, ${imageUrl.javaClass}, $imageUrl, $selectImageUri)")
                                             addingViewModel.addIngredient(
                                                 IngredientCreate(
                                                     name = brandsName.ifEmpty { name.text },
@@ -375,6 +377,20 @@ fun AddingScreen(
                                 Toast.makeText(context, "Adding Success", Toast.LENGTH_SHORT).show()
                                 navController.navigate(BottomBarScreen.Inventory.route)
                             } else if (addIngredientResult is Result.Error) {
+                                val error = (addIngredientResult as Result.Error).exception
+                                Toast.makeText(
+                                    context,
+                                    "ERROR: ${error.message.toString()}",
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                            }
+                            if (getIngredientByBarcodeResult is Result.Success){
+                                if (isFoundProduct == 1){
+                                    Toast.makeText(context,"Product Found",Toast.LENGTH_LONG).show()
+                                }else{
+                                    Toast.makeText(context,"Product not found",Toast.LENGTH_LONG).show()
+                                }
+                            }else if (getIngredientByBarcodeResult is Result.Error ){
                                 val error = (addIngredientResult as Result.Error).exception
                                 Toast.makeText(
                                     context,
@@ -674,7 +690,6 @@ fun ScanBarcodeButton(addingViewModel: AddingViewModel) {
             Toast.makeText(context, "Cancelled", Toast.LENGTH_LONG).show()
         } else {
             addingViewModel.getIngredientByBarcode(result.contents)
-            Toast.makeText(context, "Scanned: ${result.contents}", Toast.LENGTH_LONG).show()
         }
     }
     Button(

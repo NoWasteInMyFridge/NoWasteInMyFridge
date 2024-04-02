@@ -21,7 +21,8 @@ class AddingViewModel @Inject constructor(
     private val getIngredientByBarcodeUseCase: GetIngredientByBarcodeUseCase,
 ) : ViewModel() {
     private val _addIngredientResult = MutableStateFlow<Result<Unit>?>(null)
-    val addIngredientResult: StateFlow<Result<Unit>?> get() = _addIngredientResult
+    val addIngredientResult: StateFlow<Result<Unit>?>
+        get() = _addIngredientResult
 
     private val _brands = MutableStateFlow<String?>(null)
     val brands: StateFlow<String?>
@@ -30,19 +31,29 @@ class AddingViewModel @Inject constructor(
     private val _imageUrl = MutableStateFlow("")
     val imageUrl: StateFlow<String>
         get() = _imageUrl
+    private val _isFoundProduct = MutableStateFlow<Int?>(null)
+    val isFoundProduct: StateFlow<Int?>
+        get() = _isFoundProduct
+    private val _getIngredientByBarcodeResult = MutableStateFlow<Result<Unit>?>(null)
+    val getIngredientByBarcodeResult: StateFlow<Result<Unit>?>
+        get() = _getIngredientByBarcodeResult
 
     fun getIngredientByBarcode(barcode: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                _getIngredientByBarcodeResult.value = Result.Loading
                 val result = getIngredientByBarcodeUseCase(barcode)
                 Log.d("AddingViewModel", "Result: $result")
                 val brands = parseBrandsFromResponse(result)
                 _brands.value = brands
                 val imageUrl = result.product.imageUrl
                 _imageUrl.value = imageUrl
+                _isFoundProduct.value = result.status
+                _getIngredientByBarcodeResult.value = Result.Success(Unit)
                 Log.d("AddingViewModel", "Brands: $brands")
             } catch (e: Exception) {
                 Log.e("AddingViewModel", "Error getting ingredient by barcode", e)
+                _getIngredientByBarcodeResult.value = Result.Error(e)
             }
         }
     }
