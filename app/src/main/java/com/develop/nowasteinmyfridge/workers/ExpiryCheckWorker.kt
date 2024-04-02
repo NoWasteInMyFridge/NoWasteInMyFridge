@@ -12,17 +12,25 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.develop.nowasteinmyfridge.MainActivity
+import com.develop.nowasteinmyfridge.NotificationUtils
 import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.data.model.Ingredient
 import com.develop.nowasteinmyfridge.domain.CheckExpirationUseCase
+import com.google.firebase.messaging.Constants.MessagePayloadKeys.SENDER_ID
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @HiltWorker
 class ExpiryCheckWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val checkExpirationUseCase: CheckExpirationUseCase,
+    private val notificationUtils: NotificationUtils,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -30,7 +38,8 @@ class ExpiryCheckWorker @AssistedInject constructor(
             val expiringIngredients = checkExpirationUseCase()
             if (expiringIngredients.isNotEmpty()) {
                 // Trigger notification
-                showNotification(expiringIngredients)
+                val message = buildNotificationMessage(expiringIngredients)
+                notificationUtils.showNotification(message)
             }
             Result.success()
         } catch (e: Exception) {
@@ -76,5 +85,17 @@ class ExpiryCheckWorker @AssistedInject constructor(
             .setAutoCancel(true)
         notificationManager.notify(notificationId, notificationBuilder.build())
     }
+
+    private fun buildNotificationMessage(expiringIngredients: List<Ingredient>): String {
+        val stringBuilder = StringBuilder()
+        stringBuilder.append("These ingredients are expiring soon:\n")
+        val dateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        for (ingredient in expiringIngredients) {
+            val formattedDate = dateFormat.format(ingredient.efd)
+            stringBuilder.append("- ${ingredient.name}: $formattedDate\n")
+        }
+        return stringBuilder.toString()
+    }
+
 
 }

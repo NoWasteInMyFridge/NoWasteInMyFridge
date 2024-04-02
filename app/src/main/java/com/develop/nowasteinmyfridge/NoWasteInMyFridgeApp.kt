@@ -3,6 +3,7 @@ package com.develop.nowasteinmyfridge
 import android.app.Application
 import com.develop.nowasteinmyfridge.data.repository.AuthRepositoryImpl
 import com.develop.nowasteinmyfridge.workers.ExpirationCheckScheduler
+import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,6 +16,7 @@ class NoWasteInMyFridgeApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        FirebaseApp.initializeApp(this)
         scheduleDailyCheck()
     }
 
