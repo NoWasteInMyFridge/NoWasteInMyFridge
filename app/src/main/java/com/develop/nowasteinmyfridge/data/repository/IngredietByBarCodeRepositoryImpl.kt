@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import javax.inject.Inject
 
-class IngredientByBarcodeRepositoryImpl @Inject constructor() : IngredietByBarCodeRepository {
+class IngredientByBarcodeRepositoryImpl @Inject constructor() : IngredientByBarCodeRepository {
 
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://world.openfoodfacts.org/api/v0/")
@@ -17,10 +17,10 @@ class IngredientByBarcodeRepositoryImpl @Inject constructor() : IngredietByBarCo
 
     private val openFoodFactsApi = retrofit.create(OpenFoodFactsApi::class.java)
 
-    override suspend fun getIngredientByBracode(barcode: String): Product {
+    override suspend fun getIngredientByBarcode(barcode: String): Product {
         try {
             val response = openFoodFactsApi.fetchProductByCode(barcode)
-            Log.e("API_Response", "Response code: ${response.code()}, Message: ${response.message()}, URL: ${response.raw().request.url}, res: ${response.toString()}")
+            Log.e("API_Response", "Response code: ${response.code()}, Message: ${response.message()}, URL: ${response.raw().request.url}, res: $response")
             Log.e("API_Response", "Response body: ${response.body()?.toString()}")
             if (response.isSuccessful) {
                 val responseBody = response.body()

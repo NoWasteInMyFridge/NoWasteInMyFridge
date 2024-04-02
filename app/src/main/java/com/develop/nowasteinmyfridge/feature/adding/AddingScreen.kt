@@ -101,31 +101,25 @@ fun AddingScreen(
     val image by addingViewModel.imageUrl.collectAsState()
     var brandsName by remember { mutableStateOf("") }
 
-    var imageUrl by remember {
-        mutableStateOf<String>("")
-    }
+    var imageUrl by remember { mutableStateOf("") }
 
     var scanName by remember {
         mutableStateOf(
             brands?.let { TextFieldValue(it) } ?: TextFieldValue()
         )
     }
-    val useNameInsteadOfScanName = scanName.text.isNullOrEmpty()
+    val useNameInsteadOfScanName = scanName.text.isEmpty()
     LaunchedEffect(brands) {
         brandsName = brands ?: ""
         scanName = brands?.let { TextFieldValue(it) } ?: TextFieldValue()
         imageUrl = image
-        Log.d("wtf", "$selectImageUri, $brandsName")
+        Log.d("ScanQRCode", "$selectImageUri, $brandsName")
     }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri: Uri? -> selectImageUri = uri }
     )
-
-    if (brands != null) {
-        Text(text = "Brands: $brands")
-    }
 
     val addIngredientResult by addingViewModel.addIngredientResult.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -327,7 +321,6 @@ fun AddingScreen(
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
-                                    ScanBarcodeButton(addingViewModel)
                                 }
                                 Column(
                                     modifier = Modifier
@@ -341,11 +334,9 @@ fun AddingScreen(
                                             Log.d("help me", "$brandsName , $name.text, ${imageUrl.javaClass}, $imageUrl, $selectImageUri)")
                                             addingViewModel.addIngredient(
                                                 IngredientCreate(
-                                                    name = if (brandsName.isNotEmpty()) brandsName else name.text,
+                                                    name = brandsName.ifEmpty { name.text },
                                                     quantity = quantity.text.toIntOrNull() ?: 0,
-                                                    image = if (imageUrl != null && imageUrl.isNotEmpty()) {
-                                                        imageUrl
-                                                    } else {
+                                                    image = imageUrl.ifEmpty {
                                                         selectImageUri ?: ""
                                                     },
                                                     mfg = SimpleDateFormat(
@@ -369,6 +360,15 @@ fun AddingScreen(
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
+                                }
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                )  {
+                                    ScanBarcodeButton(addingViewModel)
                                 }
                             }
                             if (addIngredientResult is Result.Success) {
@@ -677,15 +677,13 @@ fun ScanBarcodeButton(addingViewModel: AddingViewModel) {
             Toast.makeText(context, "Scanned: ${result.contents}", Toast.LENGTH_LONG).show()
         }
     }
-
     Button(
         onClick = {
             launcher.launch(ScanOptions())
         },
-        modifier = Modifier.padding(16.dp),
     ) {
         Text(
-            text = "Scan QR",
+            text = stringResource(id = R.string.btn_scan_qr),
             color = Color.White,
             fontWeight = FontWeight.Bold
         )

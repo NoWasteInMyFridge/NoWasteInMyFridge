@@ -18,14 +18,18 @@ import javax.inject.Inject
 @HiltViewModel
 class AddingViewModel @Inject constructor(
     private val addIngredientUseCase: AddIngredientUseCase,
-    private val getIngredientByBarcodeUseCase: GetIngredientByBarcodeUseCase
+    private val getIngredientByBarcodeUseCase: GetIngredientByBarcodeUseCase,
 ) : ViewModel() {
     private val _addIngredientResult = MutableStateFlow<Result<Unit>?>(null)
     val addIngredientResult: StateFlow<Result<Unit>?> get() = _addIngredientResult
+
     private val _brands = MutableStateFlow<String?>(null)
-    val brands: StateFlow<String?> get() = _brands
-    private val _imageUrl = MutableStateFlow<String>("")
-    val imageUrl: StateFlow<String> get() = _imageUrl
+    val brands: StateFlow<String?>
+        get() = _brands
+
+    private val _imageUrl = MutableStateFlow("")
+    val imageUrl: StateFlow<String>
+        get() = _imageUrl
 
     fun getIngredientByBarcode(barcode: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -34,7 +38,7 @@ class AddingViewModel @Inject constructor(
                 Log.d("AddingViewModel", "Result: $result")
                 val brands = parseBrandsFromResponse(result)
                 _brands.value = brands
-                val imageUrl = result.product.image_url
+                val imageUrl = result.product.imageUrl
                 _imageUrl.value = imageUrl
                 Log.d("AddingViewModel", "Brands: $brands")
             } catch (e: Exception) {
@@ -42,10 +46,10 @@ class AddingViewModel @Inject constructor(
             }
         }
     }
+
     private fun parseBrandsFromResponse(product: Product): String {
         val brands = product.product.brands
-        val firstBrand = brands.split(",")[0]
-        return firstBrand
+        return brands.split(",")[0]
     }
 
     fun addIngredient(ingredient: IngredientCreate) {
