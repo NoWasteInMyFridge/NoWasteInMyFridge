@@ -1,9 +1,13 @@
 package com.develop.nowasteinmyfridge.workers
 
 import android.content.Context
+import android.util.Log
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -14,42 +18,30 @@ import javax.inject.Inject
 class ExpirationCheckScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
+
     fun scheduleDailyCheck() {
-        // Calculate the time for the daily check
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 5)
-            set(Calendar.MINUTE, 5)
-            set(Calendar.SECOND, 0)
-        }
+        val workRequest = buildDailyCheckWorkRequest()
 
-        // Calculate the initial delay to schedule the check
-        val currentTime = Calendar.getInstance()
-        val initialDelay = if (calendar.before(currentTime)) {
-            calendar.add(Calendar.DATE, 1) // Schedule for tomorrow if the time has passed today
-            calendar.timeInMillis - currentTime.timeInMillis
-        } else {
-            calendar.timeInMillis - currentTime.timeInMillis // Schedule for today if the time is in the future
-        }
+        enqueueOneTimeWorkRequest(workRequest)
+    }
 
-        // Set network constraints for the work request
+    private fun buildDailyCheckWorkRequest(): OneTimeWorkRequest {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        // Build the periodic work request for the daily check
-        val dailyCheckRequest = PeriodicWorkRequestBuilder<ExpiryCheckWorker>(
-            repeatInterval = 1, // Repeat daily
-            repeatIntervalTimeUnit = TimeUnit.DAYS
-        )
-            .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS) // Set the initial delay
+        return OneTimeWorkRequestBuilder<ExpiryCheckWorker>()
             .setConstraints(constraints)
             .build()
+    }
 
-        // Enqueue the periodic work request with WorkManager
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            "DailyExpirationCheck",
-            ExistingPeriodicWorkPolicy.KEEP,
-            dailyCheckRequest
-        )
+    private fun enqueueOneTimeWorkRequest(workRequest: OneTimeWorkRequest) {
+        try {
+            WorkManager.getInstance(context).enqueue(workRequest)
+            Log.d("ExpirationCheckScheduler", "Daily check triggered successfully")
+        } catch (e: Exception) {
+            Log.e("ExpirationCheckScheduler", "Error triggering daily check: ${e.message}")
+            e.printStackTrace()
+        }
     }
 }

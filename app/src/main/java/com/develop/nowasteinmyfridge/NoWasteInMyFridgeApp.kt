@@ -1,27 +1,33 @@
 package com.develop.nowasteinmyfridge
 
 import android.app.Application
-import com.develop.nowasteinmyfridge.data.repository.AuthRepositoryImpl
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import com.develop.nowasteinmyfridge.workers.ExpirationCheckScheduler
-import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+
 @HiltAndroidApp
-class NoWasteInMyFridgeApp : Application() {
+class NoWasteInMyFridgeApp : Application(), Configuration.Provider {
     @Inject
     lateinit var expirationCheckScheduler: ExpirationCheckScheduler
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
-        FirebaseApp.initializeApp(this)
         scheduleDailyCheck()
     }
 
     private fun scheduleDailyCheck() {
         expirationCheckScheduler.scheduleDailyCheck()
+    }
+
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
     }
 
 }

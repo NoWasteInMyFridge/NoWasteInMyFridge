@@ -39,5 +39,4 @@ class CheckExpirationUseCase @Inject constructor(
         val expirationThreshold = calendar.time
         return currentDate.before(expirationDate) && currentDate.after(expirationThreshold)
     }
-
 }
