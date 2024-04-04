@@ -21,26 +21,52 @@ class ExpirationCheckScheduler @Inject constructor(
 
     fun scheduleDailyCheck() {
         val workRequest = buildDailyCheckWorkRequest()
-
-        enqueueOneTimeWorkRequest(workRequest)
+        Log.e("ExpirationCheckScheduler", "ExpirationCheckScheduler is working")
+        enqueuePeriodicWorkRequest(workRequest)
     }
 
-    private fun buildDailyCheckWorkRequest(): OneTimeWorkRequest {
+    private fun buildDailyCheckWorkRequest(): PeriodicWorkRequest {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        return OneTimeWorkRequestBuilder<ExpiryCheckWorker>()
+        // Schedule the work to repeat every day at 11:30 PM
+        return PeriodicWorkRequestBuilder<ExpiryCheckWorker>(1, TimeUnit.DAYS)
             .setConstraints(constraints)
+            .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS)
             .build()
     }
 
-    private fun enqueueOneTimeWorkRequest(workRequest: OneTimeWorkRequest) {
+    private fun calculateInitialDelay(): Long {
+        val currentTimeMillis = System.currentTimeMillis()
+        val targetTimeMillis = getTargetTimeMillis()
+        return if (targetTimeMillis <= currentTimeMillis) {
+            // If the target time has already passed for today, schedule it for the next day
+            targetTimeMillis + TimeUnit.DAYS.toMillis(1) - currentTimeMillis
+        } else {
+            targetTimeMillis - currentTimeMillis
+        }
+    }
+
+    private fun getTargetTimeMillis(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 9)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
+    }
+
+    private fun enqueuePeriodicWorkRequest(workRequest: PeriodicWorkRequest) {
         try {
-            WorkManager.getInstance(context).enqueue(workRequest)
-            Log.d("ExpirationCheckScheduler", "Daily check triggered successfully")
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                "ExpiryCheckWorker",
+                ExistingPeriodicWorkPolicy.REPLACE,
+                workRequest
+            )
+            Log.d("ExpirationCheckScheduler", "Daily check scheduled successfully")
         } catch (e: Exception) {
-            Log.e("ExpirationCheckScheduler", "Error triggering daily check: ${e.message}")
+            Log.e("ExpirationCheckScheduler", "Error scheduling daily check: ${e.message}")
             e.printStackTrace()
         }
     }

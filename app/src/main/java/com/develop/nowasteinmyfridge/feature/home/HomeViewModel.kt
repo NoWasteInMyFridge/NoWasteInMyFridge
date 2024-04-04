@@ -5,12 +5,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.develop.nowasteinmyfridge.NotificationUtils
-import com.develop.nowasteinmyfridge.data.model.Ingredient
 import com.develop.nowasteinmyfridge.data.model.RecipeSearchResponse
-import com.develop.nowasteinmyfridge.domain.CheckExpirationUseCase
 import com.develop.nowasteinmyfridge.domain.GetRecipeUseCase
-import com.develop.nowasteinmyfridge.workers.ExpirationCheckScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
