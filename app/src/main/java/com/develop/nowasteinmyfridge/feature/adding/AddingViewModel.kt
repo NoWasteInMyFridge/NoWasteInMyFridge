@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddingViewModel @Inject constructor(
-    private val addIngredientUseCase: AddIngredientUseCase,
+    val addIngredientUseCase: AddIngredientUseCase,
     private val getIngredientByBarcodeUseCase: GetIngredientByBarcodeUseCase,
 ) : ViewModel() {
     private val _addIngredientResult = MutableStateFlow<Result<Unit>?>(null)
