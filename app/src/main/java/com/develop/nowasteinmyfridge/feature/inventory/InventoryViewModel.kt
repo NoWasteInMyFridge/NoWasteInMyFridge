@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.develop.nowasteinmyfridge.data.model.Ingredient
 import com.develop.nowasteinmyfridge.domain.DeleteIngredientUseCase
 import com.develop.nowasteinmyfridge.domain.GetIngredientsUseCase
+import com.develop.nowasteinmyfridge.domain.UpdateIngredientQuantityUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class InventoryViewModel @Inject constructor(
     private val getIngredientsUseCase: GetIngredientsUseCase,
     private val deleteIngredientUseCase: DeleteIngredientUseCase,
+    private val updateIngredientQuantityUseCase: UpdateIngredientQuantityUseCase,
 ) : ViewModel() {
     private val _ingredientsState = mutableStateOf<List<Ingredient>>(emptyList())
     val ingredientsState: State<List<Ingredient>>
@@ -44,6 +46,17 @@ class InventoryViewModel @Inject constructor(
                 getIngredients()
             } catch (e: Exception) {
                 Log.e("deleteIngredient", "Unable to delete Ingredient", e)
+            }
+        }
+    }
+
+    fun updateIngredientQuantity(ingredientID: String, newQuantity: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                updateIngredientQuantityUseCase.invoke(ingredientID, newQuantity)
+                getIngredients()
+            } catch (e: Exception) {
+                Log.e("updateIngredientQuantity", "Unable to update ingredient quantity", e)
             }
         }
     }
