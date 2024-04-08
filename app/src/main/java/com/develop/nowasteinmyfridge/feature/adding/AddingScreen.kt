@@ -46,7 +46,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -102,7 +101,7 @@ fun AddingScreen(
     val isFoundProduct by addingViewModel.isFoundProduct.collectAsState()
     val getIngredientByBarcodeResult by addingViewModel.getIngredientByBarcodeResult.collectAsStateWithLifecycle()
     var brandsName by remember { mutableStateOf("") }
-    var showDatePicker by remember { mutableStateOf(false) }
+    var isShowDatePicker by remember { mutableStateOf(false) }
     var isFound by remember { mutableStateOf(true) }
     var imageUrl by remember { mutableStateOf("") }
     var scanName by remember {
@@ -127,75 +126,22 @@ fun AddingScreen(
     val addIngredientResult by addingViewModel.addIngredientResult.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-fun checkAndAutoFillEfdDate(
-    name: String?,
-    mfgDate: Calendar,
-    isInFridge: Boolean
-): Calendar? {
-    val recommendedEfdDate = Calendar.getInstance()
-
-    if (name.isNullOrEmpty()) {
-        Log.d("checkAndAutoFillEfdDate", "Name is empty or null.")
-        return null
-    }
-
-    when (name.toLowerCase(Locale.getDefault())) {
-        in listOf("pork", "cow", "sheep", "goat", "beef") -> {
-            recommendedEfdDate.timeInMillis = mfgDate.timeInMillis
-            recommendedEfdDate.add(Calendar.DAY_OF_YEAR, if (isInFridge) 360 else 5)
-        }
-        in listOf("chicken", "duck") -> {
-            recommendedEfdDate.timeInMillis = mfgDate.timeInMillis
-            recommendedEfdDate.add(Calendar.DAY_OF_YEAR, if (isInFridge) 360 else 2)
-        }
-        in listOf("shrimp", "shellfish", "crab", "squid", "fish") -> {
-            recommendedEfdDate.timeInMillis = mfgDate.timeInMillis
-            recommendedEfdDate.add(Calendar.DAY_OF_YEAR, if (isInFridge) 72 else 2)
-        }
-        "egg" -> {
-            recommendedEfdDate.timeInMillis = mfgDate.timeInMillis
-            recommendedEfdDate.add(Calendar.DAY_OF_YEAR, if (isInFridge) 360 else 35)
-        }
-        in listOf(
-            "kale", "coriander", "ginger", "galangal", "carrots", "onions", "taro",
-            "eggplant", "zucchini", "fresh chilies", "oranges", "pineapples", "grapes",
-            "sapodilla", "guava", "mango",
-        ) -> {
-            if (isInFridge) {
-                Log.d("checkAndAutoFillEfdDate", "Do not freeze this ingredient: $name")
-                return null
-            } else {
-                recommendedEfdDate.timeInMillis = mfgDate.timeInMillis
-                when (name.toLowerCase(Locale.getDefault())) {
-                    in listOf("oranges", "pineapples") -> recommendedEfdDate.add(Calendar.DAY_OF_YEAR, 2)
-                    in listOf("grapes", "sapodilla", "guava", "mango") -> recommendedEfdDate.add(Calendar.DAY_OF_YEAR, 5)
-                    else -> recommendedEfdDate.add(Calendar.DAY_OF_YEAR, 10)
-                }
-            }
-        }
-        else -> {
-            isFound = false
-            Log.d("checkAndAutoFillEfdDate", "No expiration date suggested for name: $name")
-            return null
-        }
-    }
-
-    Log.d("checkAndAutoFillEfdDate", "Recommended Efd Date: $recommendedEfdDate")
-    return recommendedEfdDate
-}
-
-
     fun suggestDate() {
-        Log.d("koko", "$efdDate")
         val isInFridge = isChecked
         if (name.text.isEmpty() || mfgDate.timeInMillis == 0L) {
             Toast.makeText(context, "Please fill in name first", Toast.LENGTH_SHORT).show()
         } else {
-            val recommendedEfdDate = checkAndAutoFillEfdDate(name.text, mfgDate, isInFridge)
+            val recommendedEfdDate =
+                addingViewModel.checkAndAutoFillEfdDate(name.text, mfgDate, isInFridge)
             if (recommendedEfdDate != null) {
                 efdDate = recommendedEfdDate
             } else {
-                Toast.makeText(context, "No recommended expiration date. Please fill in by yourself.", Toast.LENGTH_SHORT).show()
+                isFound = false
+                Toast.makeText(
+                    context,
+                    "No recommended expiration date. Please fill in by yourself.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -233,8 +179,7 @@ fun checkAndAutoFillEfdDate(
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop,
                             )
-                        }
-                        else {
+                        } else {
                             Image(
                                 painter = painterResource(id = R.mipmap.add_photo),
                                 contentDescription = "",
@@ -361,19 +306,21 @@ fun checkAndAutoFillEfdDate(
                                 )
                                 ClickableTextWithPlaceholderWithNoValue(
                                     placeholder = stringResource(id = R.string.efd_placeholder),
-                                    date = if (showDatePicker && name != null && name.text != "" && isFound) efdDate else null,
+                                    date = if (isShowDatePicker && name.text != "" && isFound) efdDate else null,
                                     onDateSelected = { efdDate = it }
                                 )
                             }
                         }
                         Row(
-                            modifier = Modifier.fillMaxWidth().height(48.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp),
                             horizontalArrangement = Arrangement.End,
 
                             ) {
                             Button(
                                 onClick = {
-                                    showDatePicker = true
+                                    isShowDatePicker = true
                                     suggestDate()
 
                                 },
@@ -412,7 +359,10 @@ fun checkAndAutoFillEfdDate(
                                 ScanBarcodeButton(addingViewModel)
                                 Button(
                                     onClick = {
-                                        Log.d("addingViewModel", "$brandsName , $name.text, ${imageUrl.javaClass}, $imageUrl, $selectImageUri)")
+                                        Log.d(
+                                            "addingViewModel",
+                                            "$brandsName , $name.text, ${imageUrl.javaClass}, $imageUrl, $selectImageUri)"
+                                        )
                                         addingViewModel.addIngredient(
                                             IngredientCreate(
                                                 name = brandsName.ifEmpty { name.text },
@@ -453,13 +403,15 @@ fun checkAndAutoFillEfdDate(
                                     Toast.LENGTH_SHORT,
                                 ).show()
                             }
-                            if (getIngredientByBarcodeResult is Result.Success){
-                                if (isFoundProduct == 1){
-                                    Toast.makeText(context,"Product Found",Toast.LENGTH_LONG).show()
-                                }else{
-                                    Toast.makeText(context,"Product not found",Toast.LENGTH_LONG).show()
+                            if (getIngredientByBarcodeResult is Result.Success) {
+                                if (isFoundProduct == 1) {
+                                    Toast.makeText(context, "Product Found", Toast.LENGTH_LONG)
+                                        .show()
+                                } else {
+                                    Toast.makeText(context, "Product not found", Toast.LENGTH_LONG)
+                                        .show()
                                 }
-                            }else if (getIngredientByBarcodeResult is Result.Error ){
+                            } else if (getIngredientByBarcodeResult is Result.Error) {
                                 val error = (addIngredientResult as Result.Error).exception
                                 Toast.makeText(
                                     context,
@@ -475,7 +427,6 @@ fun checkAndAutoFillEfdDate(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputFieldWithPlaceholder(
     placeholder: String,
@@ -529,7 +480,6 @@ fun InputFieldWithPlaceholder(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputFieldWithPlaceholderWithBorder(
     placeholder: String,
