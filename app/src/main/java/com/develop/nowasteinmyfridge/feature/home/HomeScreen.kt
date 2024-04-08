@@ -33,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -78,7 +79,7 @@ fun HomeScreen(
     val displayedIngredients = ingredientsList.map { ingredient ->
         ingredient.name to ingredient.image
     }
-
+    var numberofingredients by remember { mutableStateOf(4) }
     val names = displayedIngredients.map { it.first }
     val images = displayedIngredients.map { it.second }
 
@@ -87,7 +88,7 @@ fun HomeScreen(
         SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateString)
     }
     val ingredientsForSearch = sortedDisplayedIngredients
-        .take(1).joinToString(", ") { it.name }
+        .take(numberofingredients).joinToString(", ") { it.name }
 
     val userProfile = when (val result = userInfoState) {
         is Result.Success -> {
@@ -115,6 +116,20 @@ fun HomeScreen(
 
     val recipesState by homeViewModel.recipesState
     val hits = recipesState.hits
+
+    if (recipesState != null && recipesState.hits.isEmpty()) {
+        if (numberofingredients > 1) {
+            numberofingredients--
+            LaunchedEffect(numberofingredients) {
+                try {
+                    homeViewModel.searchRecipes(ingredientsForSearch)
+                    Log.d("IngredientsForSearch", ingredientsForSearch)
+                } catch (e: Exception) {
+                    Log.e("API Request Failed", e.message ?: "Unknown error")
+                }
+            }
+        }
+    }
 
     Column {
         Box(
