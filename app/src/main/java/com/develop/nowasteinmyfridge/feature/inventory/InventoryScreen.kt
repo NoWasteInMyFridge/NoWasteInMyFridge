@@ -1,6 +1,7 @@
 package com.develop.nowasteinmyfridge.feature.inventory
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,28 +33,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.feature.inventory.component.ShowingBox
 import com.develop.nowasteinmyfridge.ui.theme.YellowBtn
+import com.develop.nowasteinmyfridge.util.Result
 
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InventoryScreen(
-    inventoryViewModel: InventoryViewModel = hiltViewModel()
+    inventoryViewModel: InventoryViewModel = hiltViewModel(),
 ) {
     val ingredientsList by inventoryViewModel.ingredientsState
     var showDialog by remember { mutableStateOf(false) }
     var selectedIngredientIndex by remember { mutableIntStateOf(-1) }
-    var selectedPercentage by remember { mutableStateOf(0f) }
     var quantityText by remember { mutableStateOf(TextFieldValue()) }
+    val updateIngredientState by inventoryViewModel.updateIngredientQuantityState.collectAsStateWithLifecycle()
+    val deleteIngredientSate by inventoryViewModel.deleteIngredientState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     Scaffold {
         Column(
@@ -147,11 +152,12 @@ fun InventoryScreen(
                                     colors = ButtonDefaults.buttonColors(YellowBtn),
                                     onClick = {
                                         showDialog = false
-                                        val initialQuantity = ingredientsList[selectedIngredientIndex].quantity
+                                        val initialQuantity =
+                                            ingredientsList[selectedIngredientIndex].quantity
                                         val updatedQuantity = initialQuantity * 0.75
                                         inventoryViewModel.updateIngredientQuantity(
-                                            ingredientsList[selectedIngredientIndex].id,
-                                            updatedQuantity.toInt()
+                                            ingredientID = ingredientsList[selectedIngredientIndex].id,
+                                            newQuantity = updatedQuantity.toInt(),
                                         )
                                     },
                                     modifier = Modifier
@@ -163,11 +169,12 @@ fun InventoryScreen(
                                     colors = ButtonDefaults.buttonColors(YellowBtn),
                                     onClick = {
                                         showDialog = false
-                                        val initialQuantity = ingredientsList[selectedIngredientIndex].quantity
+                                        val initialQuantity =
+                                            ingredientsList[selectedIngredientIndex].quantity
                                         val updatedQuantity = initialQuantity * 0.5
                                         inventoryViewModel.updateIngredientQuantity(
-                                            ingredientsList[selectedIngredientIndex].id,
-                                            updatedQuantity.toInt()
+                                            ingredientID = ingredientsList[selectedIngredientIndex].id,
+                                            newQuantity = updatedQuantity.toInt(),
                                         )
                                     },
                                     modifier = Modifier
@@ -184,11 +191,12 @@ fun InventoryScreen(
                                     colors = ButtonDefaults.buttonColors(YellowBtn),
                                     onClick = {
                                         showDialog = false
-                                        val initialQuantity = ingredientsList[selectedIngredientIndex].quantity
+                                        val initialQuantity =
+                                            ingredientsList[selectedIngredientIndex].quantity
                                         val updatedQuantity = initialQuantity * 0.25
                                         inventoryViewModel.updateIngredientQuantity(
-                                            ingredientsList[selectedIngredientIndex].id,
-                                            updatedQuantity.toInt()
+                                            ingredientID = ingredientsList[selectedIngredientIndex].id,
+                                            newQuantity = updatedQuantity.toInt(),
                                         )
                                     },
                                     modifier = Modifier
@@ -200,7 +208,9 @@ fun InventoryScreen(
                                     colors = ButtonDefaults.buttonColors(YellowBtn),
                                     onClick = {
                                         showDialog = false
-                                        inventoryViewModel.deleteIngredient(ingredientsList[selectedIngredientIndex].id)
+                                        inventoryViewModel.deleteIngredient(
+                                            ingredientID = ingredientsList[selectedIngredientIndex].id,
+                                        )
                                     },
                                     modifier = Modifier
                                         .padding(horizontal = 4.dp)
@@ -233,9 +243,10 @@ fun InventoryScreen(
                                 Button(
                                     onClick = {
                                         showDialog = false
-                                        val initialQuantity = ingredientsList[selectedIngredientIndex].quantity
-                                        val newQuantity = initialQuantity - quantityText.text.toIntOrNull()!!
-                                            ?: 0
+                                        val initialQuantity =
+                                            ingredientsList[selectedIngredientIndex].quantity
+                                        val newQuantity =
+                                            (initialQuantity - quantityText.text.toIntOrNull()!!)
                                         inventoryViewModel.updateIngredientQuantity(
                                             ingredientsList[selectedIngredientIndex].id,
                                             newQuantity
@@ -254,11 +265,25 @@ fun InventoryScreen(
             }
         }
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun InventoryScreenPreview() {
-    InventoryScreen()
+    if (updateIngredientState is Result.Success) {
+        Toast.makeText(context, "update Ingredient Success", Toast.LENGTH_SHORT).show()
+    } else if (updateIngredientState is Result.Error) {
+        val error = (updateIngredientState as Result.Error).exception
+        Toast.makeText(
+            context,
+            "ERROR: ${error.message.toString()}",
+            Toast.LENGTH_SHORT,
+        ).show()
+    }
+    if (deleteIngredientSate is Result.Success) {
+        Toast.makeText(context, "delete Ingredient Success", Toast.LENGTH_SHORT).show()
+    } else if (deleteIngredientSate is Result.Error) {
+        val error = (deleteIngredientSate as Result.Error).exception
+        Toast.makeText(
+            context,
+            "ERROR: ${error.message.toString()}",
+            Toast.LENGTH_SHORT,
+        ).show()
+    }
 }
 
