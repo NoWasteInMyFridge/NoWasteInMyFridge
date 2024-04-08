@@ -1,47 +1,61 @@
 package com.develop.nowasteinmyfridge.integrationTest
 
 import com.develop.nowasteinmyfridge.data.model.IngredientCreate
+import com.develop.nowasteinmyfridge.data.model.Product
 import com.develop.nowasteinmyfridge.domain.AddIngredientUseCase
 import com.develop.nowasteinmyfridge.domain.GetIngredientByBarcodeUseCase
 import com.develop.nowasteinmyfridge.feature.adding.AddingViewModel
 import com.develop.nowasteinmyfridge.util.Result
+import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.unmockkAll
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
+import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 @ExperimentalCoroutinesApi
-@RunWith(JUnit4::class)
 class AddingViewModelTest {
 
-    private lateinit var addingViewModel: AddingViewModel
+    private lateinit var getIngredientByBarcodeUseCase: GetIngredientByBarcodeUseCase
+    private lateinit var addIngredientUseCase: AddIngredientUseCase
+    private lateinit var viewModel: AddingViewModel
 
     @Before
-    fun setup() {
-        val addIngredientUseCase = mockk<AddIngredientUseCase>()
-        val getIngredientByBarcodeUseCase = mockk<GetIngredientByBarcodeUseCase>()
-        addingViewModel = AddingViewModel(addIngredientUseCase, getIngredientByBarcodeUseCase)
+    fun setUp() {
+        getIngredientByBarcodeUseCase = mockk()
+        addIngredientUseCase = mockk()
+        MockKAnnotations.init(this)
+        viewModel = AddingViewModel(addIngredientUseCase, getIngredientByBarcodeUseCase)
+    }
+
+    @After
+    fun tearDown() {
+        // Cleanup
+        unmockkAll()
     }
 
     @Test
-    fun `test addIngredient success`() = runTest {
-        val ingredient = IngredientCreate(image = "")
+    fun testAddIngredientSuccess() {
+        runTest {
+            // Given
+            val ingredient = mockk<IngredientCreate>()
+            coEvery { addIngredientUseCase.invoke(any()) } just Runs
 
-        coEvery { addingViewModel.addIngredientUseCase.invoke(ingredient) } just Runs
+            // When
+            viewModel.addIngredient(ingredient)
 
-        addingViewModel.addIngredient(ingredient)
-        // Await until the coroutine completes
-        advanceUntilIdle()
-
-        assertThat(addingViewModel.addIngredientResult.value, `is`(Result.Success(Unit)))
+            // Then
+            advanceUntilIdle()
+            coVerify(exactly = 1) { addIngredientUseCase.invoke(any()) }
+            assertEquals(Result.Success(Unit), viewModel.addIngredientResult.value)
+        }
     }
 }

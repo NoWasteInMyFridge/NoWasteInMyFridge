@@ -9,6 +9,7 @@ import com.develop.nowasteinmyfridge.domain.AddIngredientUseCase
 import com.develop.nowasteinmyfridge.domain.GetIngredientByBarcodeUseCase
 import com.develop.nowasteinmyfridge.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddingViewModel @Inject constructor(
-    val addIngredientUseCase: AddIngredientUseCase,
+    private val addIngredientUseCase: AddIngredientUseCase,
     private val getIngredientByBarcodeUseCase: GetIngredientByBarcodeUseCase,
 ) : ViewModel() {
     private val _addIngredientResult = MutableStateFlow<Result<Unit>?>(null)
