@@ -50,7 +50,7 @@ fun ShowingBox(
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val efdDate = dateFormat.parse(ingredient.efd)
     val today = Calendar.getInstance().time
-    val daysUntilExpiry = ((efdDate.time - today.time) / (1000 * 60 * 60 * 24)) + 1.toInt()
+    val daysUntilExpiry = (((efdDate?.time ?: 0) - today.time) / (1000 * 60 * 60 * 24)).toInt() + 1
 
     Box(
         modifier = Modifier
