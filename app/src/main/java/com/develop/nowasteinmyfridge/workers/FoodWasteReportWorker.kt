@@ -14,7 +14,8 @@ import androidx.work.WorkerParameters
 import com.develop.nowasteinmyfridge.MainActivity
 import com.develop.nowasteinmyfridge.R
 import com.develop.nowasteinmyfridge.data.model.Ingredient
-import com.develop.nowasteinmyfridge.domain.GetIngredientsUseCase
+import com.develop.nowasteinmyfridge.domain.AddPerformanceUsingIngredientUseCase
+import com.develop.nowasteinmyfridge.domain.GetFoodWasteReportUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -22,16 +23,14 @@ import dagger.assisted.AssistedInject
 class FoodWasteReportWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val getIngredientsUseCase: GetIngredientsUseCase,
+    private val addPerformanceUsingIngredientUseCase: AddPerformanceUsingIngredientUseCase,
+    private val getFoodWasteReportUseCase: GetFoodWasteReportUseCase,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         return try {
-            val ingredientUsed = getIngredientsUseCase.invoke()
-            if (ingredientUsed.isNotEmpty()) {
-                // Trigger notification
-                val message = buildNotificationMessage(ingredientUsed)
-                sendNotification(message)
-            }
+            addPerformanceUsingIngredientUseCase.invoke()
+            val performance = getFoodWasteReportUseCase.invoke()
+            sendNotification("Now has the performance of reducing food waste by ${performance.last()} %")
             Log.d("FoodWasteReportWorker", "FoodWasteReportWorker: Task completed successfully")
             Result.success()
         } catch (e:Exception){

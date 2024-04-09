@@ -21,6 +21,7 @@ class NoWasteInMyFridgeApp : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         scheduleDailyCheck()
+        scheduleFoodWasteReport()
     }
 
     private fun scheduleDailyCheck() {

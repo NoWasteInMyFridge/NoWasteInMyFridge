@@ -1,7 +1,6 @@
 package com.develop.nowasteinmyfridge.data.model
 
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -15,11 +14,11 @@ data class Ingredient(
     val isInFreezer: Boolean = false,
 ){
     fun isExpired(): Boolean {
-        val sdf = SimpleDateFormat("yy-MM-dd", Locale.getDefault())
-        sdf.isLenient = false // Ensure strict date parsing
+        val dateFormat = SimpleDateFormat("yy-MM-dd", Locale.getDefault())
+        dateFormat.isLenient = false // Ensure strict date parsing
 
         return try {
-            val expiryDate = sdf.parse(efd)
+            val expiryDate = dateFormat.parse(efd)
             val currentDate = Date()
             currentDate.after(expiryDate)
         } catch (e: Exception) {

@@ -156,11 +156,10 @@ fun InventoryScreen(
                                             val initialQuantity =
                                                 ingredientsList[selectedIngredientIndex].quantity
                                             val updatedQuantity = initialQuantity * 0.75
-                                            val quantityUsed = (initialQuantity - updatedQuantity).toInt()
+                                            (initialQuantity - updatedQuantity).toInt()
                                             inventoryViewModel.updateIngredientQuantity(
                                                 ingredientID = ingredientsList[selectedIngredientIndex].id,
                                                 newQuantity = updatedQuantity.toInt(),
-                                                quantityUsed = quantityUsed,
                                             )
                                         },
                                         modifier = Modifier
@@ -175,11 +174,10 @@ fun InventoryScreen(
                                             val initialQuantity =
                                                 ingredientsList[selectedIngredientIndex].quantity
                                             val updatedQuantity = initialQuantity * 0.5
-                                            val quantityUsed = (initialQuantity - updatedQuantity).toInt()
+                                            (initialQuantity - updatedQuantity).toInt()
                                             inventoryViewModel.updateIngredientQuantity(
                                                 ingredientID = ingredientsList[selectedIngredientIndex].id,
                                                 newQuantity = updatedQuantity.toInt(),
-                                                quantityUsed = quantityUsed,
                                             )
                                         },
                                         modifier = Modifier
@@ -199,11 +197,10 @@ fun InventoryScreen(
                                             val initialQuantity =
                                                 ingredientsList[selectedIngredientIndex].quantity
                                             val updatedQuantity = initialQuantity * 0.25
-                                            val quantityUsed = (initialQuantity - updatedQuantity).toInt()
+                                            (initialQuantity - updatedQuantity).toInt()
                                             inventoryViewModel.updateIngredientQuantity(
                                                 ingredientID = ingredientsList[selectedIngredientIndex].id,
                                                 newQuantity = updatedQuantity.toInt(),
-                                                quantityUsed = quantityUsed,
                                             )
                                         },
                                         modifier = Modifier
@@ -215,8 +212,8 @@ fun InventoryScreen(
                                         colors = ButtonDefaults.buttonColors(YellowBtn),
                                         onClick = {
                                             showDialog = false
-                                            inventoryViewModel.deleteIngredient(
-                                                ingredientID = ingredientsList[selectedIngredientIndex].id,
+                                            inventoryViewModel.useUpIngredient(
+                                                ingredient = ingredientsList[selectedIngredientIndex],
                                             )
                                         },
                                         modifier = Modifier
@@ -263,11 +260,10 @@ fun InventoryScreen(
                                                 ingredientsList[selectedIngredientIndex].quantity
                                             val newQuantity =
                                                 (initialQuantity - quantityText.text.toIntOrNull()!!)
-                                            val quantityUsed = (initialQuantity - newQuantity)
+                                            (initialQuantity - newQuantity)
                                             inventoryViewModel.updateIngredientQuantity(
                                                 ingredientID = ingredientsList[selectedIngredientIndex].id,
                                                 newQuantity = newQuantity,
-                                                quantityUsed = quantityUsed,
                                             )
                                         },
                                         modifier = Modifier.padding(horizontal = 6.dp)

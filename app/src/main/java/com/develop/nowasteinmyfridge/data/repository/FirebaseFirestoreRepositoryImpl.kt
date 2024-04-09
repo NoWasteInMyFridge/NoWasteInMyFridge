@@ -6,6 +6,7 @@ import com.develop.nowasteinmyfridge.data.model.GroceryList
 import com.develop.nowasteinmyfridge.data.model.GroceryListCreate
 import com.develop.nowasteinmyfridge.data.model.Ingredient
 import com.develop.nowasteinmyfridge.data.model.IngredientCreate
+import com.develop.nowasteinmyfridge.data.model.Report
 import com.develop.nowasteinmyfridge.data.model.UserCreate
 import com.develop.nowasteinmyfridge.data.model.UserProfile
 import com.develop.nowasteinmyfridge.util.Result
@@ -35,7 +36,6 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
     override suspend fun updateIngredientQuantity(
         ingredientID: String,
         newQuantity: Int,
-        quantityUsed: Int,
     ): Result<Unit> {
         return try {
             val ingredientQuery = db.collection("users/$userEmail/ingredients")
@@ -48,24 +48,6 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
                 return Result.Error(Exception("Ingredient not found"))
             }
 
-            val ingredientUsedQuery = db.collection("users/$userEmail/ingredientsUsed")
-                .whereEqualTo("id", ingredientID)
-                .get()
-                .await()
-
-            if (ingredientUsedQuery.isEmpty) {
-                val ingredient = ingredientQuery.toObjects(Ingredient::class.java)
-                val ingredientToUpdate = ingredient[0]
-                ingredientToUpdate.quantity = quantityUsed
-                db.collection("users/$userEmail/ingredientsUsed")
-                    .add(ingredientToUpdate)
-                    .await()
-            } else {
-                val ingredientUsedDocumentRef = ingredientUsedQuery.documents[0].reference
-                val ingredientUsed = ingredientUsedQuery.toObjects(Ingredient::class.java)[0]
-                ingredientUsed.quantity += quantityUsed
-                ingredientUsedDocumentRef.update("quantity", ingredientUsed.quantity).await()
-            }
             val ingredientDocumentRef = ingredientQuery.documents[0].reference
             ingredientDocumentRef.update("quantity", newQuantity).await()
             Result.Success(Unit)
@@ -75,7 +57,45 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
         }
     }
 
+
+    override suspend fun useUpIngredientUsed(ingredient: Ingredient) {
+      try {
+          db.collection("users/$userEmail/ingredientsUsed")
+              .add(ingredient)
+              .await()
+          deleteIngredient(ingredient.id)
+      }catch (e:Exception){
+          Log.e("FirestoreError", "Error updating ingredient quantity: $e")
+      }
+    }
+
+    override suspend fun getFoodWasteReport(): List<Report> {
+        var report = emptyList<Report>()
+        Log.e("Hi ", "getFoodWasteReport FireBase ")
+        try {
+            val querySnapshot = db.collection("users/$userEmail/foodWasteReport")
+                .get()
+                .await()
+            report = querySnapshot.toObjects(Report::class.java)
+            Log.d("FirebaseFirestore", "FirebaseFirestore: Success to getFoodWasteReport")
+        }catch (e:Exception){
+            Log.e("FirestoreError", "Error to getFoodWasteReport: $e")
+        }
+        return report
+    }
+
+    override suspend fun addPerformance(report: Report) {
+        try {
+            db.collection("users/$userEmail/foodWasteReport")
+                .add(report)
+                .await()
+        }catch (e:Exception){
+            Log.e("FirestoreError", "Error to addPerformance: $e")
+        }
+    }
+
     override suspend fun getIngredientUsed(): List<Ingredient> {
+        Log.d("FirebaseFirestore", "FirebaseFirestore: Success to getIngredientUsed")
         var ingredients = emptyList<Ingredient>()
         try {
             val querySnapshot = db.collection("users/$userEmail/ingredientsUsed").get().await()

@@ -28,7 +28,6 @@ class ExpirationCheckScheduler @Inject constructor(
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        // Schedule the work to repeat every day at 11:30 PM
         return PeriodicWorkRequestBuilder<ExpiryCheckWorker>(1, TimeUnit.DAYS)
             .setConstraints(constraints)
             .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS)
