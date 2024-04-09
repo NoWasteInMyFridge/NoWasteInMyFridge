@@ -6,7 +6,7 @@ import javax.inject.Inject
 class UpdateIngredientQuantityUseCase @Inject constructor(
     private val firestoreRepository: FirebaseFirestoreRepository
 ) {
-    suspend operator fun invoke(ingredientID: String, newQuantity: Int) {
-        firestoreRepository.updateIngredientQuantity(ingredientID, newQuantity)
+    suspend operator fun invoke(ingredientID: String, newQuantity: Int, quantityUsed: Int) {
+        firestoreRepository.updateIngredientQuantity(ingredientID, newQuantity, quantityUsed)
     }
 }

@@ -62,11 +62,11 @@ class InventoryViewModel @Inject constructor(
         }
     }
 
-    fun updateIngredientQuantity(ingredientID: String, newQuantity: Int) {
+    fun updateIngredientQuantity(ingredientID: String, newQuantity: Int, quantityUsed: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _updateIngredientQuantityState.value = Result.Loading
-                updateIngredientQuantityUseCase.invoke(ingredientID, newQuantity)
+                updateIngredientQuantityUseCase.invoke(ingredientID, newQuantity, quantityUsed)
                 getIngredients()
                 _updateIngredientQuantityState.value = Result.Success(Unit)
             } catch (e: Exception) {
