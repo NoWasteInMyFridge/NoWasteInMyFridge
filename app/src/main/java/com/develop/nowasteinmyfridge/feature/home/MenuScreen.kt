@@ -55,8 +55,8 @@ fun DisplayIngredients(ingredients: List<String>) {
 fun OvalIconView(icon: ImageVector, text: String) {
     Box(
         modifier = Modifier
-            .height(96.dp)
-            .width(70.dp)
+            .height(110.dp)
+            .width(74.dp)
             .background(Color.Gray, RoundedCornerShape(100.dp)),
     ) {
         Column(
@@ -67,7 +67,8 @@ fun OvalIconView(icon: ImageVector, text: String) {
                 modifier = Modifier
                     .size(50.dp)
                     .offset(y = (10).dp)
-                    .background(Color.White, RoundedCornerShape(100.dp))
+                    .background(Color.White, RoundedCornerShape(100.dp)),
+                contentAlignment = Alignment.Center
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -84,19 +85,26 @@ fun OvalIconView(icon: ImageVector, text: String) {
                 }
             }
             Spacer(modifier = Modifier.height(14.dp))
-            Text(
-                text = text,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Normal,
-                color = White,
-            )
+            Column(
+                modifier = Modifier.width(50.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = text,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = White,
+                    lineHeight = 12.sp
+                )
+            }
         }
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MenuScreen(name: String?, image: String?, ingredientList: List<String>) {
+fun MenuScreen(name: String?, image: String?, ingredientList: List<String>, time: Float, calories: Float, mealType: String, dishType: String) {
     Scaffold {
         Column(
             modifier = Modifier
@@ -155,14 +163,16 @@ fun MenuScreen(name: String?, image: String?, ingredientList: List<String>) {
                             ) {
                                 OvalIconView(
                                     icon = Icons.Default.AccessTimeFilled,
-                                    text = "40 mins"
+                                    text = time.toInt().toString() + " mins"
                                 )
-                                OvalIconView(icon = Icons.Default.Fastfood, text = "40 mins")
+                                OvalIconView(icon = Icons.Default.Fastfood,
+                                    text = calories.toInt().toString() + " calories"
+                                )
                                 OvalIconView(
                                     icon = Icons.Default.LocalFireDepartment,
-                                    text = "40 mins"
+                                    text = mealType
                                 )
-                                OvalIconView(icon = Icons.Default.Bookmark, text = "40 mins")
+                                OvalIconView(icon = Icons.Default.Bookmark, text = dishType)
                             }
                         }
                         Spacer(modifier = Modifier.height(32.dp))

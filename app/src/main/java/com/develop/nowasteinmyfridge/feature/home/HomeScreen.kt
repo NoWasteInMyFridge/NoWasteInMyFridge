@@ -133,7 +133,6 @@ fun HomeScreen(
             Log.d("kiki", "popopkull")
             foundState = true
         }
-        Log.d("recipesStateTOTO", "${hits}")
 
         if (hits.isEmpty()) {
             if (numberofingredients == 2) {
@@ -245,24 +244,33 @@ fun HomeScreen(
                                             listOfNotNull(it)
                                         }
                                     }.flatten()
+                                    val calories = hits.map { it.recipe.calories }
+                                    val totalTime = hits.map { it.recipe.totalTime }
+                                    val mealType = hits.flatMap { it.recipe.mealType }
+                                    val dishType = hits.flatMap { it.recipe.dishType }
                                     SliderBoxComponentVertical(
                                         names = recipeNames,
                                         images = recipeImages,
                                         ingredientLines = ingredientLinesSent,
-                                        onItemClick = { name, image, ingredientLines ->
+                                        calories = calories,
+                                        totalTime = totalTime,
+                                        mealType = mealType,
+                                        dishType = dishType,
+                                        onItemClick = { name, image, ingredientLines, calories, totalTime, mealType, dishType ->
                                             navController.navigate(
                                                 "menu/${Uri.encode(name)}/${
-                                                    Uri.encode(
-                                                        image
-                                                    )
+                                                    Uri.encode(image)
                                                 }?ingredients=${
                                                     Uri.encode(
                                                         ingredientLines.joinToString(
                                                             ";"
                                                         )
                                                     )
-                                                }"
+                                                }&calories=${Uri.encode(calories.toString())}&totalTime=${Uri.encode(totalTime.toString())}&mealType=${Uri.encode(
+                                                    mealType
+                                                )}&dishType=${Uri.encode(dishType)}"
                                             )
+
                                         }
                                     )
                                 }
@@ -347,7 +355,11 @@ fun SliderBoxComponentVertical(
     images: List<String>,
     ingredientLines: List<List<String>>,
     modifier: Modifier = Modifier,
-    onItemClick: (String, String, List<String>) -> Unit
+    calories: List<Float>,
+    totalTime: List<Float>,
+    mealType: List<String>,
+    dishType: List<String>,
+    onItemClick: (String, String, List<String>, Float, Float, String, String) -> Unit
 ) {
     var selectedIndex by remember { mutableIntStateOf(0) }
 
@@ -362,7 +374,15 @@ fun SliderBoxComponentVertical(
                     .background(MaterialTheme.colorScheme.background)
                     .clickable {
                         selectedIndex = index
-                        onItemClick(name, images.getOrNull(index) ?: "", ingredientLines[index])
+                        onItemClick(
+                            name,
+                            images.getOrNull(index) ?: "",
+                            ingredientLines[index],
+                            calories.getOrNull(index) ?: 0f,
+                            totalTime.getOrNull(index) ?: 0f,
+                            mealType[index],
+                            dishType[index]
+                        )
                     }
                     .height(100.dp)
             ) {
