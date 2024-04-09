@@ -19,9 +19,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTimeFilled
-import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.SetMeal
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -95,6 +96,7 @@ fun OvalIconView(icon: ImageVector, text: String) {
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     color = White,
+                    textAlign = TextAlign.Center,
                     lineHeight = 12.sp
                 )
             }
@@ -165,14 +167,14 @@ fun MenuScreen(name: String?, image: String?, ingredientList: List<String>, time
                                     icon = Icons.Default.AccessTimeFilled,
                                     text = time.toInt().toString() + " mins"
                                 )
-                                OvalIconView(icon = Icons.Default.Fastfood,
+                                OvalIconView(icon = Icons.Default.LocalFireDepartment,
                                     text = calories.toInt().toString() + " calories"
                                 )
                                 OvalIconView(
-                                    icon = Icons.Default.LocalFireDepartment,
+                                    icon = Icons.Default.Fastfood,
                                     text = mealType
                                 )
-                                OvalIconView(icon = Icons.Default.Bookmark, text = dishType)
+                                OvalIconView(icon = Icons.Default.SetMeal, text = dishType)
                             }
                         }
                         Spacer(modifier = Modifier.height(32.dp))
