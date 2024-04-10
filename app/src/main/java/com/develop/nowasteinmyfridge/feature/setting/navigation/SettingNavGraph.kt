@@ -11,6 +11,7 @@ import com.develop.nowasteinmyfridge.feature.grocerylist.GroceryListScreen
 import com.develop.nowasteinmyfridge.feature.login.LoginScreen
 import com.develop.nowasteinmyfridge.feature.setting.MenuSettingScreen
 import com.develop.nowasteinmyfridge.feature.setting.SettingScreen
+import com.develop.nowasteinmyfridge.feature.testnoti.TestNotificationScreen
 import com.develop.nowasteinmyfridge.feature.wastereport.WasteReportScreen
 
 const val SETTING_GRAPH_ROUTE = "setting_graph"
@@ -33,6 +34,9 @@ fun NavGraphBuilder.settingNavGraph(
         }
         composable(route = MenuSettingScreen.WasteReport.route){
             WasteReportScreen()
+        }
+        composable(route =MenuSettingScreen.TestNotification.route){
+            TestNotificationScreen()
         }
     }
 
