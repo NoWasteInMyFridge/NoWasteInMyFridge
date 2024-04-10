@@ -30,7 +30,7 @@ class FoodWasteReportWorker @AssistedInject constructor(
         return try {
             addPerformanceUsingIngredientUseCase.invoke()
             val performance = getFoodWasteReportUseCase.invoke()
-            sendNotification("Now has the performance of reducing food waste by ${performance.last()} %")
+            sendNotification("Now has the performance of reducing food waste by ${performance.last().performance} %")
             Log.d("FoodWasteReportWorker", "FoodWasteReportWorker: Task completed successfully")
             Result.success()
         } catch (e:Exception){
