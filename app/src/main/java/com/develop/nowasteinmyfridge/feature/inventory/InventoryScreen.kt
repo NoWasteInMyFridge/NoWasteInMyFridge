@@ -261,15 +261,22 @@ fun InventoryScreen(
                                             val newQuantity =
                                                 (initialQuantity - quantityText.text.toIntOrNull()!!)
                                             (initialQuantity - newQuantity)
-                                            inventoryViewModel.updateIngredientQuantity(
-                                                ingredientID = ingredientsList[selectedIngredientIndex].id,
-                                                newQuantity = newQuantity,
-                                            )
+                                            if (initialQuantity == newQuantity) {
+                                                inventoryViewModel.useUpIngredient(ingredientsList[selectedIngredientIndex])
+                                            } else {
+                                                inventoryViewModel.updateIngredientQuantity(
+                                                    ingredientID = ingredientsList[selectedIngredientIndex].id,
+                                                    newQuantity = newQuantity,
+                                                )
+                                            }
                                         },
+                                        enabled = (quantityText.text.toIntOrNull()
+                                            ?: 0) <= ingredientsList[selectedIngredientIndex].quantity,
                                         modifier = Modifier.padding(horizontal = 6.dp)
                                     ) {
                                         Text(text = "Use")
                                     }
+
                                 }
                             }
                         }
