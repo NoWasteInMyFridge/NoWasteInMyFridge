@@ -218,6 +218,7 @@ class FirebaseFirestoreRepositoryImpl @Inject constructor(
                     mfg = ingredient.mfg,
                     efd = ingredient.efd,
                     isInFreezer = ingredient.isInFreeze,
+                    isAddFromBarcode = ingredient.isAddFromBarcode,
                 )
                 db.collection("users/$userEmail/ingredients").document(ingredientId)
                     .set(newIngredient)
