@@ -1,5 +1,6 @@
 package com.develop.nowasteinmyfridge
 
+import android.util.Log
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -53,15 +54,12 @@ fun RowScope.AddItem(
             Icon(
                 imageVector = screen.icon,
                 contentDescription = "Navigation Icon",
-                tint = if (currentDestination?.route == screen.route) GrayPrimary else Color.Unspecified,
                 modifier = Modifier.size(36.dp)
             )
         },
         selected = currentDestination?.route == screen.route,
         onClick = {
-            if (currentDestination?.route != screen.route) {
                 navController.navigate(screen.route)
-            }
         }
     )
 }
